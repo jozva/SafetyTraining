@@ -277,12 +277,13 @@ function LLNDAssessment({ onComplete,userDetails }) {
         />
     ) : (
         <LLNDAssessmentComplete
+        attempt={attempt}
             data={resultData}
             onRetry={() => {
                 setTopicIndex(0)
                 setIsCompleted(false)
                 setAttempt(prev => prev + 1)
-                attempt={attempt}
+                
             }}
         />
     )
