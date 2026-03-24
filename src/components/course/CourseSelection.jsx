@@ -84,32 +84,28 @@ setSelectedCourse(selected)
 
                 <label>Enrollment type</label>
 
-                <div className="radio-group radio-group-opt">
+                <div className="radio-group">
 
-                    <label>
-
+                    <label className="radio-group-opt">
                         <input
+                            name="type"
                             type="radio"
                             value="individual"
                             checked={enrollmentType === "individual"}
                             onChange={(e) => setEnrollmentType(e.target.value)}
                         />
-
-                        Individual
-
+                        <span>Individual</span>
                     </label>
 
-                    <label>
-
+                    <label className="radio-group-opt">
                         <input
+                            name="type"
                             type="radio"
                             value="company"
                             checked={enrollmentType === "company"}
                             onChange={(e) => setEnrollmentType(e.target.value)}
                         />
-
-                        Company
-
+                        <span>Company</span>
                     </label>
 
                 </div>
