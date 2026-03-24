@@ -4,7 +4,7 @@ function AdvertisementBar() {
   return (
     <section className="advertisement-bar">
 
-      <div className="advertisement-container">
+      <div className="advertisement-container-main">
 
         <p className="ad-highlight">
           SUNDAY CLASSES AVAILABLE ! ENROLL NOW
