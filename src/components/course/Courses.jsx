@@ -59,7 +59,7 @@ function Courses() {
                 </div>
                 <div className="course-management-div">
                     <p>
-                        <i class="fa-solid fa-tag"></i>Manage Categories
+                        <i className="fa-solid fa-tag"></i>Manage Categories
                     </p>
                     <p>
                         ☰ Reorder Courses

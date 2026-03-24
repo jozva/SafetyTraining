@@ -90,10 +90,10 @@
 .drop-zone {
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
-  padding: 10px;
+  padding: 9px;
   background: #f8fafc;
   font-size: 14px;
-  width: 180px;
+  width: 160px;
   text-align: center;
 }
 /* ONLY FOR Q1 OVERLAY */
@@ -192,7 +192,7 @@
 /* overlay positions */
 .checklist {
   top: 75px;
-  left: 110px;
+  left: 175px;
 }
 .draggable {
   border-radius: 12px;
@@ -220,7 +220,7 @@
 
 .images {
   top: 130px;
-  left: 113px;
+  left: 173px;
   min-width: 150px;
 }
 
