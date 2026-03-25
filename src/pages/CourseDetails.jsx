@@ -40,7 +40,6 @@ function CourseDetails() {
         <div className="course-details-public">
 
             <TopNav />
-            <TrustBar />
             <PublicNavbar courses={courses}/>
             <CourseDetailsHero course={course} />  
             <div className="course-details-content">

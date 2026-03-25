@@ -9,6 +9,9 @@
   margin:auto;
   text-align:center;
 }
+.advertisement-container-main:first-child{
+  margin-top: 2%;
+}
 
 /* RED TOP TEXT */
 
