@@ -1,6 +1,7 @@
 import "../../styles/AdvertisementBar.css";
 
 function AdvertisementBar() {
+  console.log("ADV BAR RENDER")
   return (
     <section className="advertisement-bar">
 
@@ -18,7 +19,7 @@ function AdvertisementBar() {
           Construction Short Courses • Earthmoving • HRW Training & 
           <span> VOC's for All Courses</span>
         </p>
-
+        {console.log("ADV BAR RENDER")}
       </div>
 
     </section>
