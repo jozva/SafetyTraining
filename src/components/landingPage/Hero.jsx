@@ -16,7 +16,7 @@ function Hero() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch("https://safety-training-academy.onrender.com/api/courses")
+        const res = await fetch("https://safety-training-academy-1ws0.onrender.com/api/courses")
         if (!res.ok) {
           throw new Error("Failed to fetch courses")
         }
