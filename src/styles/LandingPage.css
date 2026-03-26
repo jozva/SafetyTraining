@@ -1,5 +1,5 @@
 .adv-bar{
-    display: block ;
+    display: block !important;
     position: relative;
 }
 .tru-bar {
