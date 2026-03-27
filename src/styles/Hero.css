@@ -6,18 +6,33 @@
     position: relative;
     display: flex;
     align-items: center;
-    transition: background-image 1s ease-in-out;
     margin-bottom: 3%;
+    overflow: hidden;
 }
 
-/* ✅ NEW: wrapper that gives dropdown a positioned parent */
+.hero-next-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transform: translateX(100%);
+  transition: none;
+}
+
+.hero-next-animate {
+  transform: translateX(0);
+transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 .hero-search-wrapper {
   position: relative;
 }
 
 .search-dropdown {
   position: absolute;
-  top: 110%;          /* ✅ sits right below the search bar */
+  top: 110%;
   left: 0;
   right: 0;
   background: white;
@@ -40,7 +55,6 @@
   background: #f2f2f2;
 }
 
-/* Overlay */
 .hero-overlay {
     position: absolute;
     inset: 0;
@@ -48,13 +62,13 @@
             rgba(10, 20, 45, 0.82) 30%,
             rgba(10, 20, 45, 0) 50%,
             rgba(10, 20, 45, 0.25) 100%);
+    z-index: 1;
 }
 
 .hero-search {
   display: flex;
   align-items: stretch;
   border-radius: 10px;
-  /* ✅ overflow:hidden removed — was clipping the dropdown */
   width: auto;
   gap: 0;
   height: 46px;
@@ -83,7 +97,7 @@
 }
 
 .hero-search-btn {
-  background: #2563eb;
+  background: #02afef;
   color: white;
   border: none;
   padding: 0 20px;
@@ -103,7 +117,6 @@
   background: #1d4ed8;
 }
 
-/* Container */
 .hero-container {
     position: relative;
     z-index: 2;
@@ -117,7 +130,6 @@
     color: white;
 }
 
-/* ── LEFT ── */
 .hero-left {
     max-width: 640px;
 }
@@ -132,7 +144,7 @@
 }
 
 .hero-left h1 span {
-    color: #2563eb;
+    color: #02afef;
     display: block;
 }
 
@@ -144,7 +156,6 @@
     max-width: 520px;
 }
 
-/* Stats row */
 .hero-stats {
     display: flex;
     gap: 32px;
@@ -183,7 +194,6 @@
     letter-spacing: 0.5px;
 }
 
-/* CTA Buttons */
 .hero-buttons {
     display: flex;
     gap: 14px;
@@ -198,7 +208,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #2563eb;
+    background: #02afef;
     color: white;
     border: none;
     padding: 13px 26px;
@@ -236,7 +246,6 @@
     transform: translateY(-1px);
 }
 
-/* ── RIGHT CARD ── */
 .hero-card {
     width: 375px;
     flex-shrink: 0;
@@ -280,7 +289,6 @@
     line-height: 1.6;
 }
 
-/* Card Buttons */
 .enrol-btn {
     width: 100%;
     padding: 15px;
@@ -301,7 +309,7 @@
 }
 
 .hero-card > .enrol-btn {
-    background: #2563eb !important;
+    background: #02afef !important;
 }
 
 .enrol-btn:hover {
@@ -332,7 +340,6 @@
     transform: translateY(-1px);
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
     .hero-container {
         flex-direction: column;
@@ -399,7 +406,6 @@
         display: none;
     }
 
-    /* Overlay */
     .hero-overlay {
         background: linear-gradient(to right,
                 rgba(10, 20, 45, 0.82) 30%,

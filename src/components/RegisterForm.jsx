@@ -29,7 +29,7 @@ function RegisterForm() {
             try {
 
                 const res = await axios.post(
-                    "https://safety-training-academy-1ws0.onrender.com/api/auth/register",
+                    "http://localhost:8000/api/auth/register",
                     values
                 )
 
@@ -114,6 +114,7 @@ function RegisterForm() {
                     <option value="Student">Student</option>
                     <option value="Teacher">Teacher</option>
                     <option value="Admin">Admin</option>
+                    <option value="Company">Company</option>
 
                 </select>
 

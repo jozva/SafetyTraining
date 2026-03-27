@@ -378,7 +378,7 @@ function EnrollmentForms() {
 
   const fetchForms = async () => {
     try {
-      const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/enrollment-form");
+      const res = await axios.get("http://localhost:8000/api/enrollment-form");
       const formatted = res.data.map((item) => ({
         id: item._id,
         date: new Date(item.createdAt).toLocaleDateString(),
@@ -450,7 +450,7 @@ function EnrollmentForms() {
       {/* Filters */}
       <div className="ef-filters">
         <div className="search-wrapper">
-          <span className="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <span className="search-icon"><i className="fa-solid fa-magnifying-glass"></i></span>
           <input
             className="ef-search"
             type="text"

@@ -9,6 +9,7 @@ import PortalLayout from "./pages/PortalLayout"
 import StudentDashboard from "./pages/StudentDashboard"
 import TeacherDashboard from "./pages/TeacherDashboard"
 import AdminDashboard from "./pages/AdminDashboard"
+import CompanyDashboard from "./components/company/CompanyDashboard"
 import Students from "./components/Students"
 import Schedule from "./components/Schedule"
 import Teachers from "./components/Teachers"
@@ -30,6 +31,10 @@ import VocMain from "./components/voc/VocMain"
 import Contact from "./components/Contact"
 import About from "./components/About"
 import CourseCard from "./components/course/CourseCard"
+import Companies from "./components/Companies"
+import CompanyCourses from "./components/company/CompanyCourses"
+import StudentsEnrolled from "./components/company/StudentsEnrolled"
+import CompanyPayments from "./components/company/CompanyPayments"
 
 function App() {
 
@@ -67,6 +72,12 @@ function App() {
                     <Route index element={<TeacherDashboard />} />
                 </Route>
 
+                <Route path="/company" element={<PortalLayout user={user} />}>
+                    <Route index element={<CompanyDashboard />} />
+                    <Route path="companyCourses" element={<CompanyCourses />} />
+                    <Route path="companyStudents" element={<StudentsEnrolled />} />
+                    <Route path="companyPayments" element={<CompanyPayments />} />
+                </Route>
                 {/* ADMIN */}
 
                 <Route path="/admin" element={<PortalLayout user={user} />}>
@@ -83,6 +94,7 @@ function App() {
                     <Route path="google-reviews" element={<GoogleReviews />} />
                     <Route path="gallery" element={<Gallery />} />
                     <Route path="courses" element={<Courses />} />
+                    <Route path="companies" element={<Companies />} />
 
                 </Route>
 

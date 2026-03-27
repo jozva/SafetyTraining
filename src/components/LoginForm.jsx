@@ -24,7 +24,7 @@ function LoginForm() {
     onSubmit: async (values) => {
       try {
         const res = await axios.post(
-          "https://safety-training-academy-1ws0.onrender.com/api/auth/login",
+          "http://localhost:8000/api/auth/login",
           values
         );
         localStorage.setItem("token", res.data.token);
@@ -35,6 +35,7 @@ function LoginForm() {
         if (role === "Student") navigate("/student");
         if (role === "Teacher") navigate("/teacher");
         if (role === "Admin") navigate("/admin");
+        if (role === "Company") navigate("/company");
       } catch (err) {
         alert(err.response?.data?.message || "Login failed");
       }

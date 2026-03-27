@@ -28,6 +28,7 @@ function Sidebar({ user }) {
       { name: "Dashboard", path: "/admin", icon: "fa-solid fa-table-columns" },
       { name: "Courses", path: "/admin/courses", icon: "fa-solid fa-book" },
       { name: "Students", path: "/admin/students", icon: "fa-solid fa-users" },
+      { name: "Companies", path: "/admin/companies", icon: "fa-solid fa-users" },
       { name: "Schedule", path: "/admin/schedule", icon: "fa-solid fa-calendar" },
       { name: "Teachers", path: "/admin/teachers", icon: "fa-solid fa-chalkboard-user" },
       { name: "LLND Results", path: "/admin/llnd-results", icon: "fa-solid fa-clipboard-check" },
@@ -38,6 +39,12 @@ function Sidebar({ user }) {
       { name: "Certificates", path: "/admin/certificates", icon: "fa-solid fa-award" },
       { name: "Google Reviews", path: "/admin/google-reviews", icon: "fa-solid fa-star" },
       { name: "Gallery", path: "/admin/gallery", icon: "fa-solid fa-image" }
+    ],
+    Company: [
+      { name: "Dashboard", path: "/company", icon: "fa-solid fa-table-columns" },
+      { name: "Courses", path: "/company/companyCourses", icon: "fa-solid fa-book" },
+      { name: "Payments", path: "/company/companyPayments", icon: "fa-solid fa-dollar-sign" },
+       { name: "Students", path: "/company/companyStudents", icon: "fa-solid fa-users" },
     ]
   }
 

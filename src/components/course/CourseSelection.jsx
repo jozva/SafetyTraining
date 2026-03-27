@@ -7,7 +7,8 @@ function CourseSelection({
   setEnrollmentType,
   selectedSession,
   setSelectedSession,selectedCourse,
-  setSelectedCourse}) {
+  setSelectedCourse,
+hideEnrollmentType}) {
 
     const [courses, setCourses] = useState([])
     const [slots, setSlots] = useState([])
@@ -21,7 +22,7 @@ function CourseSelection({
 
             try {
 
-                const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses")
+                const res = await axios.get("http://localhost:8000/api/courses")
                 setCourses(res.data)
 
             } catch (err) {
@@ -61,7 +62,7 @@ setSelectedCourse(selected)
         try {
 
             const res = await axios.get(
-                `https://safety-training-academy-1ws0.onrender.com/api/schedules/course/${courseId}`
+                `http://localhost:8000/api/schedules/course/${courseId}`
             )
 
             setSlots(res.data)
@@ -79,7 +80,7 @@ setSelectedCourse(selected)
         <>
 
             {/* Enrollment Type */}
-
+            {!hideEnrollmentType && (
             <div className="form-group">
 
                 <label>Enrollment type</label>
@@ -110,7 +111,7 @@ setSelectedCourse(selected)
 
                 </div>
 
-            </div>
+            </div>)}
 
             {/* Course Select */}
 

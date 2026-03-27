@@ -5,7 +5,7 @@ import Hero from "../components/landingPage/Hero";
 import PublicNavbar from "../components/PublicNavbar";
 import TopNav from "../components/landingPage/TopNav";
 import TrustBar from "../components/landingPage/TrustBar";
-import AdvertisementBar from "../components/landingPage/AdvertisementBar";
+import PromoBar from "../components/landingPage/PromoBar";
 import CoursesSection from "../components/course/CoursesSection";
 import AboutSection from "../components/landingPage/AboutSection";
 import ClientsSection from "../components/landingPage/ClientsSection";
@@ -20,7 +20,7 @@ function LandingPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses"); // change your API
+        const res = await axios.get("http://localhost:8000/api/courses"); // change your API
         setCourses(res.data);
       } catch (err) {
         console.error(err);
@@ -38,7 +38,7 @@ function LandingPage() {
 
       <div className="adv-bar">
         <div>
-          <AdvertisementBar />
+          <PromoBar />
         </div>
         <div className="tru-bar">
           <TrustBar />

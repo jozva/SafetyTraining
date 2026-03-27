@@ -4,20 +4,29 @@ import "../styles/BookNow.css";
 import Payment from "../components/Payment";
 import LLNDAssessment from "../components/llnd/LLNDAssessment";
 import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegister";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useSearchParams } from "react-router-dom";
+
+const DUMMY_DATA = {
+  username: "ydmart",
+  email: "yd.mart@yahoo.com",
+  enrollLink: "http://localhost:5173/book-now?type=company",
+};
 
 function BookNow() {
     const navigate = useNavigate();
     const enrollRef = useRef(null);
-
-    const [enrollmentType, setEnrollmentType] = useState("individual");
-    const [step, setStep] = useState(1);
+    const [searchParams] = useSearchParams();
+    const isCompanyEnroll = searchParams.get("type") === "company";
+    const [enrollmentType, setEnrollmentType] = useState(isCompanyEnroll ? "company" : "individual");
+    const [step, setStep] = useState(isCompanyEnroll ? 1 : 1);
     const [selectedSession, setSelectedSession] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
 
     const [enrollSection, setEnrollSection] = useState(1);
     const [isPaymentValid, setIsPaymentValid] = useState(false);
     const [triggerValidation, setTriggerValidation] = useState(false);
+
+    
 
     const [userDetails, setUserDetails] = useState({
         name: "",
@@ -26,7 +35,8 @@ function BookNow() {
     });
 
     const totalSteps = enrollmentType === "individual" ? 4 : 2;
-    const progress = (step / totalSteps) * 100;
+    const effectiveStep = isCompanyEnroll ? step - 1 : step;
+    const progress = (effectiveStep / totalSteps) * 100;
 
     useEffect(() => {
         if (step === 1) {
@@ -83,6 +93,7 @@ function BookNow() {
                         setSelectedSession={setSelectedSession}
                         selectedCourse={selectedCourse}
                         setSelectedCourse={setSelectedCourse}
+                        hideEnrollmentType={isCompanyEnroll} 
                     />
                 )}
 
@@ -96,6 +107,7 @@ function BookNow() {
                         setSelectedSession={setSelectedSession}
                         setIsValid={setIsPaymentValid}
                         triggerValidation={triggerValidation}
+                         isCompanyEnroll={isCompanyEnroll}
                     />
                 )}
 

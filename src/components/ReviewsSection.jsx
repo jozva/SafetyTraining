@@ -1,52 +1,58 @@
-import "../styles/ReviewsSection.css"
+import { useEffect, useRef, useState } from "react";
+import "../styles/ReviewsSection.css";
+import reviewsData from "../data/googlereviews.json";
 
-function ReviewsSection(){
+function ReviewsSection() {
+  // Only use reviews that have text
+  const reviews = reviewsData.filter((r) => r.text);
 
-const reviews=[
-{ name:"Alexander Knudsen", rating:5 },
-{ name:"Jackson", rating:5 },
-{ name:"Anders Sørensen", rating:4 },
-{ name:"Jonathan Harvey", rating:5 }
-]
+  const trackRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-return(
+  // Duplicate reviews for infinite loop effect
+  const doubled = reviews;
 
-<section className="reviews-section">
+  return (
+    <section className="reviews-section">
+      <div className="container review-container">
+        <h2 className="review-title">Reviews</h2>
 
-<div className="container review-container">
-
-<h2 className="review-title">Reviews</h2>
-
-<div className="reviews-grid">
-
-{reviews.map((r,i)=>(
-
-<div key={i} className="review-card">
-
-<div className="review-avatar">G</div>
-
-<h4>{r.name}</h4>
-
-<h2 className="rating">{r.rating}.0</h2>
-
-<div className="stars">⭐⭐⭐⭐⭐</div>
-
-<button className="review-btn">
-review us on G
-</button>
-
-</div>
-
-))}
-
-</div>
-
-</div>
-
-</section>
-
-)
-
+        <div
+          className="carousel-wrapper"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div
+            className={`carousel-track ${isPaused ? "paused" : ""}`}
+            ref={trackRef}
+            style={{ "--total": doubled.length }}
+          >
+            {doubled.map((r, i) => (
+              <div key={i} className="review-card">
+                <div className="review-avatar">
+                  {r.name.charAt(0).toUpperCase()}
+                </div>
+                <h4 className="reviewer-name">{r.name}</h4>
+                <div className="stars">
+                  {"⭐".repeat(r.stars)}
+                </div>
+                <p className="review-text">"{r.text}"</p>
+                
+                    <a
+                        href={r.reviewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="review-btn"
+                    >
+                        View on Google
+                    </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
-export default ReviewsSection
+export default ReviewsSection;

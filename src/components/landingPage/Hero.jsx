@@ -3,23 +3,24 @@ import sliderOne from "../../assets/Slider1.jpeg"
 import sliderTwo from "../../assets/Slider2.jpeg"
 import sliderThree from "../../assets/Slider3.jpeg"
 import { useNavigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 function Hero() {
   const navigate = useNavigate()
   const images = [sliderOne, sliderTwo, sliderThree]
-  const [index, setIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [nextIndex, setNextIndex] = useState(1)
+  const [animating, setAnimating] = useState(false)
   const [pubsearch, pubsetSearch] = useState("")
   const [suggestions, setSuggestions] = useState([])
   const [allCourses, setAllCourses] = useState([])
+  const currentIndexRef = useRef(0)
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch("https://safety-training-academy-1ws0.onrender.com/api/courses")
-        if (!res.ok) {
-          throw new Error("Failed to fetch courses")
-        }
+        const res = await fetch("http://localhost:8000/api/courses")
+        if (!res.ok) throw new Error("Failed to fetch courses")
         const data = await res.json()
         setAllCourses(data)
       } catch (error) {
@@ -31,7 +32,14 @@ function Hero() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length)
+      const next = (currentIndexRef.current + 1) % images.length
+      setNextIndex(next)
+      setAnimating(true)
+      setTimeout(() => {
+        currentIndexRef.current = next
+        setCurrentIndex(next)
+        setAnimating(false)
+      }, 1200)
     }, 4000)
     return () => clearInterval(interval)
   }, [])
@@ -48,7 +56,13 @@ function Hero() {
   }, [pubsearch])
 
   return (
-    <section className="hero" style={{ backgroundImage: `url(${images[index]})` }}>
+    <section className="hero" style={{ backgroundImage: `url(${images[currentIndex]})` }}>
+
+      <div
+        className={`hero-next-layer ${animating ? "hero-next-animate" : ""}`}
+        style={{ backgroundImage: `url(${images[nextIndex]})` }}
+      />
+
       <div className="hero-overlay"></div>
       <div className="hero-container">
 
@@ -75,7 +89,6 @@ function Hero() {
               <i className="fa-solid fa-book-open"></i> View All Courses
             </button>
 
-            {/* ✅ Wrapper with position:relative so dropdown positions correctly */}
             <div className="hero-search-wrapper">
               <div className="hero-search">
                 <input
@@ -103,7 +116,6 @@ function Hero() {
                 </button>
               </div>
 
-              {/* ✅ Dropdown is outside .hero-search but inside the relative wrapper */}
               {suggestions.length > 0 && (
                 <div className="search-dropdown">
                   {suggestions.map((course) => (

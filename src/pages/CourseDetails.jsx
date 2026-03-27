@@ -21,12 +21,12 @@ function CourseDetails() {
 
     useEffect(() => {
 
-        axios.get(`https://safety-training-academy-1ws0.onrender.com/api/courses/${courseId}`)
+        axios.get(`http://localhost:8000/api/courses/${courseId}`)
             .then(res => {
                 setCourse(res.data)
             })
 
-        axios.get(`https://safety-training-academy-1ws0.onrender.com/api/courses`)
+        axios.get(`http://localhost:8000/api/courses`)
             .then(res => {
                 setCourses(res.data)
             })
