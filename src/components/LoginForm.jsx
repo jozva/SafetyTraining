@@ -24,7 +24,7 @@ function LoginForm() {
     onSubmit: async (values) => {
       try {
         const res = await axios.post(
-          "http://localhost:8000/api/auth/login",
+          "https://safety-training-academy-1ws0.onrender.com/api/auth/login",
           values
         );
         localStorage.setItem("token", res.data.token);
