@@ -10,7 +10,13 @@ function LLNDAssessmentComplete({ data, onRetry,attempt }) {
     sections: []
   }
 
-  const isPassed = safeData.percentage >= 67
+const isOverallPass = safeData.percentage >= 67;
+
+const isAllSectionsPass = safeData.sections.every(
+  (s) => s.status === "Passed"
+);
+
+const isPassed = isOverallPass && isAllSectionsPass;
 
   return (
     <div className="llnd-complete-card">

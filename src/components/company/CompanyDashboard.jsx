@@ -1,14 +1,7 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import "./CompanyDashboard.css";
 
-/* ── Dummy Data ── */
-const DUMMY_DATA = {
-  username: "ydmart",
-  email: "yd.mart@yahoo.com",
-  enrollLink: "https://safetytrainingacademy.edu.au/enroll/9187ff32",
-};
 
-/* ── Sub-components ── */
 
 function SummaryCards() {
   const cards = [
@@ -117,8 +110,20 @@ function QuickLinksCard({ username, email }) {
 }
 
 /* ── Main Component ── */
-export default function CompanyDashboard({ data = DUMMY_DATA }) {
-  const { username, email, enrollLink } = data;
+export default function CompanyDashboard() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setData(user);
+  }, []);
+
+  if (!data) return <p>Loading...</p>;
+
+  const username = data.name;
+  const email = data.email;
+
+  const enrollLink = `http://localhost:5173/book-now/${data.id}`;
 
   return (
     <div className="cd-wrapper">

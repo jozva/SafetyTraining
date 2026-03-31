@@ -7,7 +7,12 @@ import EnrollmentSection5 from "./EnrollmentSection5"
 
 const EnrollmentRegister = forwardRef(({ userDetails, section, setSection }, ref) => {
 
+
+
+   
     const [formData, setFormData] = useState({
+        flowId: localStorage.getItem("flowId"),
+        userId: localStorage.getItem("enrollId"),
         title: "",
         surname: "",
         givenName: userDetails?.name || "",
@@ -117,7 +122,7 @@ const EnrollmentRegister = forwardRef(({ userDetails, section, setSection }, ref
                 },
                 body: JSON.stringify(formData)
             })
-
+            console.log(formData)
             const data = await res.json()
 
             if (!res.ok) throw new Error(data.message)

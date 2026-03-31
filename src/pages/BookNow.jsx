@@ -4,29 +4,59 @@ import "../styles/BookNow.css";
 import Payment from "../components/Payment";
 import LLNDAssessment from "../components/llnd/LLNDAssessment";
 import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegister";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 
-const DUMMY_DATA = {
-  username: "ydmart",
-  email: "yd.mart@yahoo.com",
-  enrollLink: "http://localhost:5173/book-now?type=company",
-};
+
 
 function BookNow() {
     const navigate = useNavigate();
     const enrollRef = useRef(null);
-    const [searchParams] = useSearchParams();
-    const isCompanyEnroll = searchParams.get("type") === "company";
-    const [enrollmentType, setEnrollmentType] = useState(isCompanyEnroll ? "company" : "individual");
-    const [step, setStep] = useState(isCompanyEnroll ? 1 : 1);
+    const { id: enrollId } = useParams();
+    const [isCompanyEnroll, setIsCompanyEnroll] = useState(false);
+    const [isLoading, setIsLoading] = useState(!!enrollId);
+    const [enrollmentType, setEnrollmentType] = useState("individual");
+    const [step, setStep] = useState(1);
     const [selectedSession, setSelectedSession] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
-
     const [enrollSection, setEnrollSection] = useState(1);
     const [isPaymentValid, setIsPaymentValid] = useState(false);
     const [triggerValidation, setTriggerValidation] = useState(false);
+    const [paymentData, setPaymentData] = useState({});
 
-    
+
+    useEffect(() => {
+        if (selectedCourse?._id) {
+            localStorage.setItem("courseId", selectedCourse._id);
+        }
+    }, [selectedCourse]);
+
+    useEffect(() => {
+        if (selectedSession?._id) {
+            localStorage.setItem("sessionId", selectedSession._id);
+        }
+    }, [selectedSession]);
+
+    useEffect(() => {
+        if (!enrollId) return;
+
+        setIsLoading(true);
+
+        fetch(`https://safety-training-academy-1ws0.onrender.com/api/book-now/check-role?id=${enrollId}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("API RESPONSE:", data);
+
+                if (data.role === "company" || data.role === "Company") {
+                    setIsCompanyEnroll(true);
+                    setEnrollmentType("company");
+                } else {
+                    navigate("/");
+                }
+            })
+            .catch(() => navigate("/"))
+            .finally(() => setIsLoading(false));
+
+    }, [enrollId]);
 
     const [userDetails, setUserDetails] = useState({
         name: "",
@@ -38,22 +68,65 @@ function BookNow() {
     const effectiveStep = isCompanyEnroll ? step - 1 : step;
     const progress = (effectiveStep / totalSteps) * 100;
 
-    useEffect(() => {
+   useEffect(() => {
         if (step === 1) {
             setSelectedSession(null);
+            localStorage.removeItem("enrollId");
+            localStorage.removeItem("flowId");
+            localStorage.removeItem("courseId");
+            localStorage.removeItem("sessionId");
         }
     }, [step]);
 
+    if (isLoading) return <div>Loading...</div>;
+
+    const createFlow = async () => {
+        try {
+            const studentId = localStorage.getItem("enrollId");
+
+            if (!studentId) {
+
+                console.error("No studentId found");
+                return;
+            }
+
+            const res = await fetch("https://safety-training-academy-1ws0.onrender.com/api/flow/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    studentId,
+                    course: {
+                        courseId: selectedCourse._id,
+                        courseName: selectedCourse.category,
+                        price: selectedCourse.sellingPrice
+                    },
+                    enrollmentType
+                })
+            });
+
+            const data = await res.json();
+
+            localStorage.setItem("flowId", data._id);
+
+            console.log("FLOW CREATED:", data);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <section className="enroll-page">
-            
+
             <h1 className="title">Student Enrollment</h1>
             <p className="subtitle">Complete all steps to enroll in your course</p>
 
             <div className="enroll-card">
-                
+
                 {/* Stepper */}
-                <p className="home-pg-btn" style={{width:"fit-content",padding:"10px 20px"}} onClick={()=>{navigate("/")}}>
+                <p className="home-pg-btn" style={{ width: "fit-content", padding: "10px 20px" }} onClick={() => { navigate("/") }}>
                     Back to Home
                 </p>
                 <div className="stepper">
@@ -93,7 +166,7 @@ function BookNow() {
                         setSelectedSession={setSelectedSession}
                         selectedCourse={selectedCourse}
                         setSelectedCourse={setSelectedCourse}
-                        hideEnrollmentType={isCompanyEnroll} 
+                        hideEnrollmentType={isCompanyEnroll}
                     />
                 )}
 
@@ -107,14 +180,15 @@ function BookNow() {
                         setSelectedSession={setSelectedSession}
                         setIsValid={setIsPaymentValid}
                         triggerValidation={triggerValidation}
-                         isCompanyEnroll={isCompanyEnroll}
+                        isCompanyEnroll={isCompanyEnroll}
+                        setPaymentData={setPaymentData}
                     />
                 )}
 
                 {step === 3 && (
                     <LLNDAssessment
                         userDetails={userDetails}
-                        onComplete={() => setStep(4)}
+                        onComplete={() => isCompanyEnroll ? navigate("/enrollment-success", { state: { email: userDetails.email } }) : setStep(4)}
                     />
                 )}
 
@@ -139,7 +213,7 @@ function BookNow() {
                                     if (enrollSection > 1) {
                                         setEnrollSection(prev => prev - 1);
                                     }
-                                    return; 
+                                    return;
                                 }
 
                                 setStep(prev => prev - 1);
@@ -153,13 +227,56 @@ function BookNow() {
                         <button
                             className="next-btn"
                             disabled={
-                                (step === 1 && !selectedSession) ||
-                                (step === 2 && !isPaymentValid)
+                                (step === 1 && !selectedSession) 
                             }
                             onClick={async () => {
 
                                 if (step === 2) {
                                     setTriggerValidation(true);
+                                     console.log("isPaymentValid:", isPaymentValid);
+
+                                    if (!isPaymentValid) return;
+
+                                    try {
+
+                                        console.log("try block entered");
+                                        let studentId = localStorage.getItem("enrollId");
+                                        console.log("studentId from localStorage:", studentId);
+
+                                        // ✅ create only if not exists
+                                        if (!studentId) {
+                                            const res = await fetch("https://safety-training-academy-1ws0.onrender.com/api/enroll/enrollment", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json"
+                                                },
+                                                body: JSON.stringify({
+                                                    ...userDetails,
+                                                    payment: paymentData,
+                                                    courseId: selectedCourse?._id
+                                                })
+                                            });
+
+                                            const data = await res.json();
+                                            studentId = data._id;
+
+                                            localStorage.setItem("enrollId", studentId);
+                                        }
+
+                                        // ✅ create flow only once
+                                        const flowId = localStorage.getItem("flowId");
+
+                                        if (!flowId) {
+                                            await createFlow();
+                                        }
+
+                                        setStep(3);
+
+                                    } catch (err) {
+                                        alert(err.message);
+                                    }
+
+                                    return;
                                 }
 
                                 // 🔥 Enrollment flow
@@ -188,7 +305,9 @@ function BookNow() {
                                 }
 
                                 // 🔥 Normal steps
-                                if (step < totalSteps) {
+                                if (isCompanyEnroll && step === 2) {
+                                    setStep(3);
+                                } else if (step < totalSteps) {
                                     setStep(prev => prev + 1);
                                 }
                             }}
@@ -205,4 +324,3 @@ function BookNow() {
 }
 
 export default BookNow;
-

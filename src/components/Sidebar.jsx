@@ -37,7 +37,6 @@ function Sidebar({ user }) {
       { name: "Exams", path: "/admin/exams", icon: "fa-solid fa-file-lines" },
       { name: "Payments", path: "/admin/payments", icon: "fa-solid fa-dollar-sign" },
       { name: "Certificates", path: "/admin/certificates", icon: "fa-solid fa-award" },
-      { name: "Google Reviews", path: "/admin/google-reviews", icon: "fa-solid fa-star" },
       { name: "Gallery", path: "/admin/gallery", icon: "fa-solid fa-image" }
     ],
     Company: [

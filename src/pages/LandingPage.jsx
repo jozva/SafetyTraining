@@ -13,15 +13,19 @@ import ContactEnrollment from "../components/landingPage/ContactEnrollment";
 import Footer from "../components/landingPage/Footer";
 import "../styles/LandingPage.css"
 import { useLocation } from "react-router-dom";
+import Carousel from "../components/CarouselMain"
 
 function LandingPage() {
   const [courses, setCourses] = useState([]);
+  const [categories, setCategories] = useState([]); 
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses"); // change your API
         setCourses(res.data);
+        const uniqueCategories = [...new Set(res.data.map(c => c.category))];
+        setCategories(uniqueCategories);
       } catch (err) {
         console.error(err);
       }
@@ -44,8 +48,11 @@ function LandingPage() {
           <TrustBar />
         </div>
       </div>
+      <div>
+        <Carousel courses={courses} />
+      </div>
       <div id="courses">
-        <CoursesSection />
+        <CoursesSection categories={categories}  />
       </div>
       <AboutSection />
       <ClientsSection />

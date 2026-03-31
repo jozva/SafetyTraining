@@ -64,8 +64,11 @@ function Hero() {
       />
 
       <div className="hero-overlay"></div>
+       <div className="announcement-bar">
+          <p>🔥 SUNDAY CLASSES AVAILABLE • ENROLL NOW • LIMITED SEATS 🔥 </p>
+        </div>
       <div className="hero-container">
-
+       
         {/* LEFT */}
         <div className="hero-left">
           <h1>

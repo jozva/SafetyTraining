@@ -5,6 +5,7 @@ background:linear-gradient(to right,#dbeafe,#e0f2fe);
 .clients-container{
     height: auto !important;
     background: transparent;
+    display: block !important;
 }
 
 .clients-title{
@@ -13,7 +14,9 @@ color:#0ea5e9;
 margin-bottom:40px;
 font-weight:700;
 }
-
+.review-container{
+    display: block !important;
+}
 .clients-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);

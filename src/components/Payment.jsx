@@ -2,7 +2,7 @@ import { useState } from "react"
 import "../styles/Payment.css"
 import { useEffect } from "react"
 
-function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, coursePrice, setIsValid, triggerValidation }) {
+function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, coursePrice, setIsValid, triggerValidation, isCompanyEnroll, setPaymentData }) {
 
     const [paymentMethod, setPaymentMethod] = useState("bank")
 
@@ -26,17 +26,44 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
     const [touched, setTouched] = useState(false)
 
     // Errors State
- useEffect(() => {
-  if (!name && !email && !phone) return
+    useEffect(() => {
+        if (!name && !email && !phone) return
 
-  setUserDetails(prev => ({
-    ...prev,
-    name,
-    email,
-    phone
-  }))
-}, [name, email, phone])
+        setUserDetails(prev => ({
+            ...prev,
+            name,
+            email,
+            phone
+        }))
+    }, [name, email, phone])
 
+    useEffect(() => {
+        const fullData = {
+            name,
+            email,
+            phone,
+            agreed,
+            paymentMethod,
+            transactionId,
+            paymentSlip,
+            cardName,
+            cardNumber,
+            expiryMonth,
+            expiryYear,
+            cvv
+        };
+
+        setPaymentData(fullData);
+
+    }, [
+        name, email, phone, agreed,
+        paymentMethod,
+        transactionId, paymentSlip,
+        cardName, cardNumber,
+        expiryMonth, expiryYear, cvv
+    ]);
+
+    
     const validate = () => {
         const newErrors = {}
 
@@ -47,16 +74,16 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
         if (!agreed) newErrors.agreed = "Please agree to the terms"
 
         if (paymentMethod === "bank") {
-            if (!transactionId.trim()) newErrors.transactionId = "Transaction ID is required"
-            if (!paymentSlip) newErrors.paymentSlip = "Payment slip is required"
+            if (!isCompanyEnroll && !transactionId.trim()) newErrors.transactionId = "Transaction ID is required"
+            if (!isCompanyEnroll && !paymentSlip) newErrors.paymentSlip = "Payment slip is required"
         }
 
         if (paymentMethod === "card") {
-            if (!cardName.trim()) newErrors.cardName = "Name on card is required"
-            if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required"
-            if (!expiryMonth) newErrors.expiryMonth = "Expiry month is required"
-            if (!expiryYear) newErrors.expiryYear = "Expiry year is required"
-            if (!cvv.trim()) newErrors.cvv = "CVV is required"
+            if (!isCompanyEnroll && !cardName.trim()) newErrors.cardName = "Name on card is required"
+            if (!isCompanyEnroll && !cardNumber.trim()) newErrors.cardNumber = "Card number is required"
+            if (!isCompanyEnroll && !expiryMonth) newErrors.expiryMonth = "Expiry month is required"
+            if (!isCompanyEnroll && !expiryYear) newErrors.expiryYear = "Expiry year is required"
+            if (!isCompanyEnroll && !cvv.trim()) newErrors.cvv = "CVV is required"
         }
 
         // 👇 ONLY show errors when triggered
@@ -67,22 +94,24 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
         return Object.keys(newErrors).length === 0
     }
 
- const handleContinue = () => {
-    setTouched(true)
-    if (validate()) {
-        setUserDetails(prev => ({
-  ...prev,
-  name,
-  email,
-  phone
-}))
+    const handleContinue = () => {
+
+        setTouched(true)
+        if (validate()) {
+            setUserDetails(prev => ({
+                ...prev,
+                name,
+                email,
+                phone
+            }))
+        }
+
     }
-        
-}
     useEffect(() => {
         const isValid = validate()
+        console.log("isValid:", isValid)
         if (setIsValid) setIsValid(isValid)
-    }, [name, phone, email, agreed, transactionId, paymentSlip, cardName, cardNumber, expiryMonth, expiryYear, cvv, paymentMethod])
+    }, [name, phone, email, agreed, transactionId, paymentSlip, cardName, cardNumber, expiryMonth, expiryYear, cvv, paymentMethod, triggerValidation])
 
     return (
 
@@ -176,39 +205,39 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
             </div>
 
             {/* Payment Method */}
+            {!isCompanyEnroll && (
+                <div className="payment-method">
 
-            <div className="payment-method">
+                    <label>Select Payment Method *</label>
 
-                <label>Select Payment Method *</label>
-
-                <div
-                    className={`method-card ${paymentMethod === "bank" ? "active" : ""}`}
-                    onClick={() => setPaymentMethod("bank")}
-                >
-                    <input type="radio" checked={paymentMethod === "bank"} readOnly />
-                    <div>
-                        <strong>Bank Transfer</strong>
-                        <p>Transfer to our bank account - pay later</p>
+                    <div
+                        className={`method-card ${paymentMethod === "bank" ? "active" : ""}`}
+                        onClick={() => setPaymentMethod("bank")}
+                    >
+                        <input type="radio" checked={paymentMethod === "bank"} readOnly />
+                        <div>
+                            <strong>Bank Transfer</strong>
+                            <p>Transfer to our bank account - pay later</p>
+                        </div>
                     </div>
-                </div>
 
-                <div
-                    className={`method-card ${paymentMethod === "card" ? "active" : ""}`}
-                    onClick={() => setPaymentMethod("card")}
-                >
-                    <input type="radio" checked={paymentMethod === "card"} readOnly />
-                    <div>
-                        <strong>Credit Card - Pay Now</strong>
-                        <p>Pay securely with your card online</p>
+                    <div
+                        className={`method-card ${paymentMethod === "card" ? "active" : ""}`}
+                        onClick={() => setPaymentMethod("card")}
+                    >
+                        <input type="radio" checked={paymentMethod === "card"} readOnly />
+                        <div>
+                            <strong>Credit Card - Pay Now</strong>
+                            <p>Pay securely with your card online</p>
+                        </div>
                     </div>
-                </div>
 
-            </div>
+                </div>
+            )}
+
 
             {/* Bank Details */}
-
-            {paymentMethod === "bank" && (
-
+            {!isCompanyEnroll && paymentMethod === "bank" && (
                 <div className="bank-details">
 
                     <h4>Bank Details</h4>
@@ -258,12 +287,12 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                     </p>
 
                 </div>
-
             )}
+
 
             {/* Card Payment */}
 
-            {paymentMethod === "card" && (
+            {!isCompanyEnroll && paymentMethod === "card" && (
 
                 <div className="card-payment">
 

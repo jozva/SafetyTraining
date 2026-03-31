@@ -184,8 +184,13 @@ setSelectedCourse(selected)
 
                                             <div
                                                 key={index}
-                                                className={`slot-card ${selectedSession === session.startTime ? "active" : ""}`}
-                                                onClick={() => setSelectedSession(session.startTime)}
+                                                className={`slot-card ${selectedSession?.startTime === session.startTime ? "active" : ""}`}
+                                                onClick={() => {
+                                                    setSelectedSession({
+                                                        ...session,
+                                                        date: slot.date // 🔥 add date also
+                                                    });
+                                                }}
                                             >
 
                                                 <div className="slot-time">

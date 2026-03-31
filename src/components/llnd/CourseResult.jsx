@@ -76,7 +76,34 @@ function CourseResult({ onRetry, onContinue, data }) {
                 <button
                     className="continue-btn"
                     disabled={!(agree1 && agree2)}
-                    onClick={onContinue}
+                    onClick={async () => {
+                        try {
+
+
+                            const flowId = localStorage.getItem("flowId");
+
+                            const payload = {
+                                flowId,
+                                ...data,
+                                answers: data.answers || []  
+                            };
+
+                            const res = await fetch("https://safety-training-academy-1ws0.onrender.com/api/flow/llnd", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(payload)
+                            });
+
+                            // 🔥 next step
+                            onContinue();
+
+                        } catch (err) {
+                            console.error(err);
+                            alert("Failed to save assessment");
+                        }
+                    }}
                 >
                     Continue to Enrollment Form
                 </button>

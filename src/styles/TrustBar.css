@@ -104,6 +104,7 @@
         align-items: flex-start;
         padding: 16px 20px;
         gap: 16px;
+        display: none;
     }
 
     .trust-item {

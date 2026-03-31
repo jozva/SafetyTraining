@@ -219,7 +219,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
                 name: userDetails?.name || "Student",
                 email: userDetails?.email || "",
                 phone: userDetails?.phone || "",
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                answers: answers
             }
 
             setResultData(forcedResult)
@@ -239,7 +240,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
             name: userDetails?.name || "Student",
             email: userDetails?.email || "",
             phone: userDetails?.phone || "",
-            date: new Date().toLocaleDateString()
+            date: new Date().toLocaleDateString(),
+            answers:answers
         }
 
         setResultData(result)

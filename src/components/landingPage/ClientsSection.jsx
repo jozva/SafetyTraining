@@ -4,40 +4,40 @@ import clientTwo from "../../assets/client-two.jpeg"
 import clientThree from "../../assets/client-three.jpeg"
 import clientFour from "../../assets/client-four.jpeg"
 
-function ClientsSection(){
+function ClientsSection() {
 
-const clients = [
-clientOne,
-clientTwo,
-clientThree,
-clientFour
-]
+    const clients = [
+        clientOne,
+        clientTwo,
+        clientThree,
+        clientFour
+    ]
 
-return(
+    return (
 
-<section className="clients-section">
+        <section className="clients-section">
 
-<div className="container clients-container">
+            <div className="container clients-container">
 
-<h2 className="clients-title">Our Clients</h2>
+                <h2 className="clients-title">Our Clients</h2>
 
-<div className="clients-grid">
+                <div className="clients-grid">
 
-{clients.map((logo,index)=>(
-<div key={index} className="client-card">
+                    {clients.map((logo, index) => (
+                        <div key={index} className="client-card">
 
-<img src={logo} alt="client"/>
+                            <img src={logo} alt="client" />
 
-</div>
-))}
+                        </div>
+                    ))}
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-</section>
+        </section>
 
-)
+    )
 
 }
 

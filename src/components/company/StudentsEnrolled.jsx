@@ -264,7 +264,7 @@ export default function StudentsEnrolled({
       </div>
 
       {/* Pay outstanding card */}
-      <PayOutstandingCard payments={payments} />
+      {/* <PayOutstandingCard payments={payments} /> */}
     </div>
   );
 }

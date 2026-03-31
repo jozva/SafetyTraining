@@ -35,6 +35,7 @@ import Companies from "./components/Companies"
 import CompanyCourses from "./components/company/CompanyCourses"
 import StudentsEnrolled from "./components/company/StudentsEnrolled"
 import CompanyPayments from "./components/company/CompanyPayments"
+import AllCourses from "./components/landingPage/AllCourses"
 
 function App() {
 
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/contact" element={<Contact/>}/>
                 <Route path="/about" element={<About/>}/>
                 <Route path="/course" element={<CourseCard/>}/>
+                <Route path="/all-courses" element={<AllCourses/>}/>
 
                 {/* STUDENT */}
 
