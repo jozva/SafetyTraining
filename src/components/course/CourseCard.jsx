@@ -27,12 +27,17 @@ function CourseCard({ course }) {
         <div className="course-top">
 
           <span className="badge">
-            {course.category}
+            {`${course.category}`}
           </span>
 
-          <span className="price">
+          <div className="course-card-price">
+            <p className="price">
             ${course.sellingPrice}
-          </span>
+          </p>
+          <p className="old-price">
+            ${course.originalPrice}
+          </p>
+          </div>
 
         </div>
 
@@ -42,9 +47,9 @@ function CourseCard({ course }) {
 
         <div className="courseCard-info">
 
-          <p>📍 {course.location}</p>
-          <p>🏢 Delivery: {course.deliveryMethod}</p>
-          <p>🕒{course.duration}</p>
+          <p><span><i class="fa-solid fa-location-dot"></i></span> {course.location}</p>
+          <p><span><i class="fa-solid fa-chalkboard-user"></i></span> Delivery: {course.deliveryMethod}</p>
+          <p><span><i class="fa-regular fa-calendar-days"></i></span>{course.duration}</p>
 
         </div>
 
@@ -87,25 +92,27 @@ function CourseCard({ course }) {
 
           <button className="book-btn-course " onClick={()=>navigate(`/book-now/${course._id}`)}>
 
-            <span className="old-price">
+            {/* <span className="old-price">
               ${course.originalPrice}
             </span>
 
             <span className="new-price-cc">
               ${course.sellingPrice}
-            </span>
-
+            </span> */}
+            
             Book Now
-
+              <span><i class="fa-regular fa-circle-right"></i></span>
           </button>
 
         )}
 
         <button
-          className="details-btn"
+          className="details-btn detail-btn-course"
           onClick={() => navigate(`/course/${course.slug}-${course._id}`)}
         >
+          
           View Details
+          <span><i class="fa-solid fa-circle-info"></i></span>
         </button>
 
       </div>

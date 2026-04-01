@@ -43,8 +43,8 @@ color:white;
 }
 .courses-grid{
 display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:70px;
+grid-template-columns:repeat(4,1fr);
+gap:30px;
 }
 .category-block{
     margin-bottom: 35px;
@@ -59,4 +59,11 @@ gap:50px;
 .courses-grid{
 grid-template-columns:1fr;
 gap:30px;
-}}
+}
+.courses-section{
+    width: 97%;
+}
+.category-title {
+    font-size: 20px;
+}
+}

@@ -4,7 +4,7 @@
    CSS VARIABLES
 ═══════════════════════════════════════════════════════ */
 :root {
-  --brand:       #7c3aed;
+  --brand:       #02afef;
   --brand-dark:  #5b21b6;
   --brand-light: #ede9fe;
   --accent:      #f59e0b;
@@ -527,7 +527,7 @@
   .hp-card-img-wrap {
     width: 60px;       /* fixed size */
     height: 60px;      /* square → circle */
-    border-radius: 50%;
+    border-radius: 20%;
     flex-shrink: 0;
   }
 

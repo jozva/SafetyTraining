@@ -32,7 +32,7 @@ function CoursesSection() {
 
           const visibleCourses = expanded[category]
             ? categoryCourses
-            : categoryCourses.slice(0,3)
+            : categoryCourses.slice(0,4)
 
           return (
 
@@ -50,7 +50,7 @@ function CoursesSection() {
 
               </div>
 
-              {categoryCourses.length > 3 && (
+              {categoryCourses.length > 4 && (
 
                 <div className="show-more-wrapper">
 
