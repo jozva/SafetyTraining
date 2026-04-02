@@ -1,5 +1,7 @@
+import { img } from "framer-motion/client";
 import "../../styles/CourseCard.css"
 import { useNavigate } from "react-router-dom";
+import starImg from "../../assets/star.png"
 function CourseCard({ course }) {
 
   const navigate = useNavigate()
@@ -19,6 +21,7 @@ function CourseCard({ course }) {
         <div className="image-overlay">
           View Details
         </div>
+        
 
       </div>
 
@@ -34,22 +37,32 @@ function CourseCard({ course }) {
             <p className="price">
             ${course.sellingPrice}
           </p>
-          <p className="old-price">
-            ${course.originalPrice}
-          </p>
+        
           </div>
+          {/* {course.originalPrice && (
+            <div className="image-category-strip">
+              <img src={starImg} alt="Star" /><span>Special Price</span>
+            </div>
+          )} */}
 
         </div>
 
-        <h3 className="course-title">
+        <div className="special-price">
+          <h3 className="course-title">
           {course.title}
         </h3>
+          {course.originalPrice && (
+            <p className="old-price">
+              ${course.originalPrice}
+            </p>
+          )}
+        </div>
 
         <div className="courseCard-info">
 
-          <p><span><i class="fa-solid fa-location-dot"></i></span> {course.location}</p>
-          <p><span><i class="fa-solid fa-chalkboard-user"></i></span> Delivery: {course.deliveryMethod}</p>
-          <p><span><i class="fa-regular fa-calendar-days"></i></span>{course.duration}</p>
+          <p><span><i className="fa-solid fa-location-dot"></i></span> {course.location}</p>
+          <p><span><i className="fa-solid fa-chalkboard-user"></i></span> Delivery: {course.deliveryMethod}</p>
+          <p><span><i className="fa-regular fa-calendar-days"></i></span>{course.duration}</p>
 
         </div>
 

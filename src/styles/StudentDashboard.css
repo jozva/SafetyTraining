@@ -1,0 +1,157 @@
+/* Dashboard.css */
+.dashboard-container {
+  padding: 24px 20px;
+  margin: 0 auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard-header {
+  margin-bottom: 24px;
+}
+
+.dashboard-welcome {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #7c3aed;
+  margin: 0 0 6px;
+}
+
+.wave {
+  display: inline-block;
+  animation: wave-anim 1.5s infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave-anim {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.dashboard-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.dashboard-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #d1fae5;
+  background: #f0fdf4;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border-color: #a7f3d0;
+}
+
+.alert-icon {
+  font-size: 1.1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.alert-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #065f46;
+  margin: 0;
+}
+
+.alert-desc {
+  font-size: 0.85rem;
+  color: #047857;
+  margin: 0;
+}
+
+.alert-link {
+  font-size: 0.85rem;
+  color: #059669;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 2px;
+}
+
+.alert-link:hover {
+  text-decoration: underline;
+}
+
+.quick-actions-card {
+  background: linear-gradient(135deg, #7c3aed, #c026d3);
+  border-radius: 16px;
+  padding: 24px 20px;
+}
+
+.quick-actions-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.quick-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quick-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: none;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #111827;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  text-align: left;
+  width: 100%;
+}
+
+.quick-action-btn:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.qa-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 16px 14px;
+  }
+  .dashboard-welcome {
+    font-size: 1.3rem;
+  }
+  .quick-actions-card {
+    padding: 18px 14px;
+  }
+  .quick-action-btn {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+}

@@ -10,7 +10,8 @@ function Sidebar({ user }) {
   const menu = {
     Student: [
       { name: "Dashboard", path: "/student" },
-      { name: "My Courses", path: "/student/courses" },
+      { name: "My Courses", path: "/student/my-courses" },
+      { name: "Enrollment Form", path: "/student/enrollment-form" },
       { name: "Schedule", path: "/student/schedule" },
       { name: "Results", path: "/student/results" },
       { name: "Certificates", path: "/student/certificates" }
@@ -53,6 +54,13 @@ function Sidebar({ user }) {
     setIsOpen(false)
   }
 
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  navigate("/login");
+};
+
   return (
     <>
       {/* Burger button — visible only on mobile */}
@@ -81,7 +89,7 @@ function Sidebar({ user }) {
           </button>
         ))}
 
-        <button className="logout">
+        <button className="logout" onClick={()=>{handleLogout()}}>
           Logout
         </button>
       </div>

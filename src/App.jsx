@@ -36,6 +36,11 @@ import CompanyCourses from "./components/company/CompanyCourses"
 import StudentsEnrolled from "./components/company/StudentsEnrolled"
 import CompanyPayments from "./components/company/CompanyPayments"
 import AllCourses from "./components/landingPage/AllCourses"
+import StudentMyCourses from "./components/student/StudentMyCourses"
+import StudentCertificate from "./components/student/StudentCertificate"
+import StudentEnrollmentForm from "./components/student/StudentEnrollmentForm"
+import StudentResults from "./components/student/StudentResults"
+import StudentSchedule from "./components/student/StudentSchedule"
 
 function App() {
 
@@ -66,6 +71,11 @@ function App() {
 
                 <Route path="/student" element={<PortalLayout user={user} />}>
                     <Route index element={<StudentDashboard />} />
+                     <Route path="/student/my-courses" element={<StudentMyCourses/>}/>
+                     <Route path="/student/schedule" element={<StudentSchedule/>}/>
+                     <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
+                     <Route path="/student/results" element={<StudentResults/>}/>
+                     <Route path="/student/certificates" element={<StudentCertificate/>}/>
                 </Route>
 
                 {/* TEACHER */}

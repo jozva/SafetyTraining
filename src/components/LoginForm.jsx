@@ -30,7 +30,6 @@ function LoginForm() {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         login(res.data.user);
-
         const role = res.data.user.role;
         if (role === "Student") navigate("/student");
         if (role === "Teacher") navigate("/teacher");
