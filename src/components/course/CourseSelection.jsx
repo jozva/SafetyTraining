@@ -22,7 +22,7 @@ hideEnrollmentType}) {
 
             try {
 
-                const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses")
+                const res = await axios.get("https://safety-training-academy.onrender.com/api/courses")
                 setCourses(res.data)
 
             } catch (err) {
@@ -62,7 +62,7 @@ setSelectedCourse(selected)
         try {
 
             const res = await axios.get(
-                `https://safety-training-academy-1ws0.onrender.com/api/schedules/course/${courseId}`
+                `https://safety-training-academy.onrender.com/api/schedules/course/${courseId}`
             )
 
             setSlots(res.data)
@@ -139,7 +139,7 @@ setSelectedCourse(selected)
                             value={course._id}
                         >
 
-                            {course.courseCode} - {course.category} - ${course.sellingPrice}
+                            {course.courseCode} - {course.title} - ${course.sellingPrice}
 
                         </option>
 

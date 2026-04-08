@@ -174,7 +174,7 @@ export default function CompanyViewModal({ company, onClose }) {
             try {
                 const token = localStorage.getItem("token");
                 const res = await axios.get(
-                    `https://safety-training-academy-1ws0.onrender.com/api/companies/${company._id}/details`,
+                    `https://safety-training-academy.onrender.com/api/companies/${company._id}/details`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setData(res.data.data);

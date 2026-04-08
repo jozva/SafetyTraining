@@ -131,7 +131,7 @@ export default function LlndResults() {
   });
 
   useEffect(() => {
-  fetch("https://safety-training-academy-1ws0.onrender.com/api/flow/llnd-results")
+  fetch("https://safety-training-academy.onrender.com/api/flow/llnd-results")
     .then(res => res.json())
     .then(res => {
       setData(res);

@@ -22,7 +22,7 @@ function LandingPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses"); // change your API
+        const res = await axios.get("https://safety-training-academy.onrender.com/api/courses"); // change your API
         setCourses(res.data);
         const uniqueCategories = [...new Set(res.data.map(c => c.category))];
         setCategories(uniqueCategories);

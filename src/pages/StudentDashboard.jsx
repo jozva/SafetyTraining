@@ -24,7 +24,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
     const fetchDashboard = async () => {
       try {
-        const res = await fetch(`https://safety-training-academy-1ws0.onrender.com/api/student/dashboard/${studentId}`);
+        const res = await fetch(`https://safety-training-academy.onrender.com/api/student/dashboard/${studentId}`);
 
         if (!res.ok) {
           throw new Error("Failed to fetch data");

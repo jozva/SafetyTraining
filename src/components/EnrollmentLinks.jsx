@@ -530,7 +530,7 @@ export default function EnrollmentLinks() {
   };
 
   const handleCopyUrl = (id) => {
-    const url = `https://safetytrainingacademy.edu.au/enroll/${id}`;
+    const url = `safetytrainingacademy.edu.au/enroll/${id}`;
     navigator.clipboard.writeText(url).catch(() => {});
     showToast("URL copied to clipboard");
   };
