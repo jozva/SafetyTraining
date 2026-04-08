@@ -41,7 +41,7 @@ function BookNow() {
 
         setIsLoading(true);
 
-        fetch(`https://safety-training-academy.onrender.com/api/book-now/check-role?id=${enrollId}`)
+        fetch(`https://safety-training-academy-tho8.onrender.com/api/book-now/check-role?id=${enrollId}`)
             .then(res => res.json())
             .then(data => {
                 console.log("API RESPONSE:", data);
@@ -90,7 +90,7 @@ function BookNow() {
                 return;
             }
 
-            const res = await fetch("https://safety-training-academy.onrender.com/api/flow/create", {
+            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -245,7 +245,7 @@ function BookNow() {
 
                                         // ✅ create only if not exists
                                         if (!studentId) {
-                                            const res = await fetch("https://safety-training-academy.onrender.com/api/enroll/enrollment", {
+                                            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enroll/enrollment", {
                                                 method: "POST",
                                                 headers: {
                                                     "Content-Type": "application/json"

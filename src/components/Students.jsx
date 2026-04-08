@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "../styles/Student.css";
 
 const ITEMS_PER_PAGE = 10;
-const API_BASE = "https://safety-training-academy.onrender.com/api";
+const API_BASE = "https://safety-training-academy-tho8.onrender.com/api";
 
 // ─── Badge Components ───────────────────────────────────────────────────────
 

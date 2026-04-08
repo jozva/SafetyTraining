@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Carousel.css";
 
-const API_BASE = "https://safety-training-academy.onrender.com/api";
+const API_BASE = "https://safety-training-academy-tho8.onrender.com/api";
 
 export default function HomePage({ courses = [] }) {
   const categories = [

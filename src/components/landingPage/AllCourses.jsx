@@ -15,7 +15,7 @@ function AllCourses() {
   const selectedCategory = params.get("category");
 
   useEffect(() => {
-    fetch("https://safety-training-academy.onrender.com/api/courses")
+    fetch("https://safety-training-academy-tho8.onrender.com/api/courses")
       .then(res => res.json())
       .then(data => {
         setCourses(data);
