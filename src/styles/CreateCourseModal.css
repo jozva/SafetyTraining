@@ -313,7 +313,8 @@
 }
 
 .purple{
-  background:linear-gradient(90deg,#7c3aed,#c026d3);
+  background:linear-gradient(90deg,#7c3aed,#c026d3) !important;
+  color: white !important;
 }
 
 .experience{
@@ -359,6 +360,26 @@ grid-template-columns:1fr 1fr;
 gap:20px;
 margin-top:20px;
 
+}
+
+.combo-expanded {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.combo-price-duration-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.combo-expanded small {
+    color: #888;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
 }
 
 .experience-card{

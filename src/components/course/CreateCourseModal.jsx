@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik"
 import axios from "axios"
 import "../../styles/CreateCourseModal.css";
@@ -17,12 +17,16 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
     const [requirements, setRequirements] = useState([""]);
     const [pathways, setPathways] = useState([""]);
     const [experienceEnabled, setExperienceEnabled] = useState(false)
+    const [comboEnabled, setComboEnabled] = useState(false)
     const [withExpPrice, setWithExpPrice] = useState("")
     const [withExpOriginal, setWithExpOriginal] = useState("")
     const [withoutExpPrice, setWithoutExpPrice] = useState("")
     const [withoutExpOriginal, setWithoutExpOriginal] = useState("")
     const [imageType, setImageType] = useState("url")
     const [imageFile, setImageFile] = useState(null)
+    const [comboDescription, setComboDescription] = useState("")
+    const [comboPrice, setComboPrice] = useState("")
+    const [comboDuration, setComboDuration] = useState("")
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -39,7 +43,8 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
             originalPrice: editCourse?.originalPrice || "",
             sellingPrice: editCourse?.sellingPrice || "",
             slblStrikePrice: editCourse?.slblStrikePrice || "",
-            slblPrice: editCourse?.slblPrice || ""
+            slblPrice: editCourse?.slblPrice || "",
+
         },
         onSubmit: async (values) => {
 
@@ -76,6 +81,10 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
             formData.append("withExperienceOriginal", withExpOriginal)
             formData.append("withoutExperiencePrice", withoutExpPrice)
             formData.append("withoutExperienceOriginal", withoutExpOriginal)
+            formData.append("comboEnabled", comboEnabled)
+            formData.append("comboDescription", comboDescription)
+            formData.append("comboPrice", comboPrice)
+            formData.append("comboDuration", comboDuration)
 
             // image logic
             if (imageType === "upload" && imageFile) {
@@ -131,6 +140,10 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
 
             setWithoutExpPrice(editCourse.withoutExperiencePrice || "");
             setWithoutExpOriginal(editCourse.withoutExperienceOriginal || "");
+            setComboEnabled(editCourse.comboEnabled || false);
+            setComboDescription(editCourse.comboDescription || "");
+            setComboPrice(editCourse.comboPrice || "");
+            setComboDuration(editCourse.comboDuration || "");
         }
     }, [editCourse]);
 
@@ -598,9 +611,59 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
                                     </p>
 
                                     <label className="checkbox-row">
-                                        <input type="checkbox" />
+                                        <input type="checkbox"
+                                            checked={comboEnabled}
+                                            onChange={(e) => setComboEnabled(e.target.checked)}
+                                        />
                                         Enable Combo Package Offer
                                     </label>
+                                    {comboEnabled && (
+                                        <div className="combo-expanded">
+
+                                            <div className="form-group">
+                                                <label>Combo Description (Optional)</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g., RIIWHS204E + RIIWHS202E Enter and work in confined spaces"
+                                                    value={comboDescription}
+                                                    onChange={(e) => setComboDescription(e.target.value)}
+                                                />
+                                                <small>Describe what courses are included in this combo package</small>
+                                            </div>
+
+                                            <div className="combo-price-duration-row">
+
+                                                <div className="form-group">
+                                                    <label>Combo Price ($) (Optional)</label>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="e.g., 350"
+                                                        value={comboPrice}
+                                                        onChange={(e) => setComboPrice(e.target.value)}
+                                                    />
+                                                </div>
+
+                                                <div className="form-group">
+                                                    <label>Combo Duration (Optional)</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="e.g., 2 Days Training"
+                                                        value={comboDuration}
+                                                        onChange={(e) => setComboDuration(e.target.value)}
+                                                    />
+                                                </div>
+
+                                            </div>
+
+                                            <div className="preview-box">
+                                                <h3>Combo Preview</h3>
+                                                <p><strong>Package:</strong> {comboDescription || "N/A"}</p>
+                                                <p><strong>Price:</strong> ${comboPrice || 0}</p>
+                                                <p><strong>Duration:</strong> {comboDuration || "N/A"}</p>
+                                            </div>
+
+                                        </div>
+                                    )}
 
                                 </div>
 

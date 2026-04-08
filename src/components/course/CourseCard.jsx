@@ -103,7 +103,7 @@ function CourseCard({ course }) {
 
         ) : (
 
-          <button className="book-btn-course " onClick={()=>navigate(`/book-now/${course._id}`)}>
+          <button className="book-btn-course " onClick={()=>navigate(`/book-now`)}>
 
             {/* <span className="old-price">
               ${course.originalPrice}

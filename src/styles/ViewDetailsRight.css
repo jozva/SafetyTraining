@@ -8,7 +8,10 @@ height:fit-content;
 }
 
 /* PRICE CARD */
-
+.detail-item-div{
+    display: flex;
+    align-items: center;
+}
 .price-card{
 background:linear-gradient(135deg,#06b6d4,#2563eb);
 padding:40px;

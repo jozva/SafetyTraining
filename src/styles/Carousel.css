@@ -111,7 +111,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   flex: 1;
-  justify-content: space-around;
+  justify-content: flex-start;
 }
 .hp-track::-webkit-scrollbar { display: none; }
 
@@ -515,6 +515,8 @@
     gap: 12px;
     overflow-x: unset;
     padding: 8px 0 16px;
+      justify-content: space-around;
+
   }
 
   .hp-card {

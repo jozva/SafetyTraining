@@ -1,149 +1,144 @@
 import "../styles/ViewDetailsLeft.css"
 function ViewDetailsLeft({ course }) {
 
-return (
+    return (
 
-<div className="view-details-left">
+        <div className="view-details-left">
 
-{/* COURSE IMAGE */}
+            {/* COURSE IMAGE */}
 
-<div className="course-image">
+            <div className="course-image">
 
-<img
-src={course?.image}
-alt={course?.title}
-/>
+                <img
+                    src={course?.image}
+                    alt={course?.title}
+                />
 
-</div>
-
-
-{/* INFO CARDS */}
-
-<div className="course-info-container">
-
-<div className="info-card delivery">
-
-<span>🌐</span>
-<p>Delivery</p>
-<strong>{course?.deliveryMethod}</strong>
-
-</div>
+            </div>
 
 
-<div className="info-card price">
+            {/* INFO CARDS */}
 
-<span>💲</span>
-<p>Price</p>
-<strong>${course?.sellingPrice}</strong>
+            <div className="course-info-container">
 
-</div>
+                <div className="info-card delivery">
 
+                    <span>🌐</span>
+                    <p>Delivery</p>
+                    <strong>{course?.deliveryMethod}</strong>
 
-<div className="info-card duration">
-
-<span>📅</span>
-<p>Duration</p>
-<strong>{course?.duration}</strong>
-
-</div>
+                </div>
 
 
-<div className="info-card location">
+                <div className="info-card price">
 
-<span>📍</span>
-<p>Location</p>
-<strong>{course?.location}</strong>
+                    <span>💲</span>
+                    <p>Price</p>
+                    <strong>${course?.sellingPrice}</strong>
 
-</div>
-
-</div>
+                </div>
 
 
-{/* COMBO OFFER */}
+                <div className="info-card duration">
 
-<div className="course-combo-div">
+                    <span>📅</span>
+                    <p>Duration</p>
+                    <strong>{course?.duration}</strong>
 
-<p className="combo-label">
-SPECIAL COMBO OFFER
-</p>
-
-<h2>
-Save More with Our Combo Package!
-</h2>
-
-<p className="-course">
-{course?.title}
-</p>
+                </div>
 
 
-<div className="combo-bottom">
+                <div className="info-card location">
 
-<div>
+                    <span>📍</span>
+                    <p>Location</p>
+                    <strong>{course?.location}</strong>
 
-<p>Combo Price</p>
-<h3>${course?.sellingPrice}</h3>
+                </div>
 
-</div>
-
-
-<div>
-
-<p>Duration</p>
-<h3>{course?.duration}</h3>
-
-</div>
+            </div>
 
 
-<button className="combo-btn-course">
-Book Combo Now
-</button>
+            {/* COMBO OFFER */}
 
-</div>
+            {course?.comboEnabled && (
+                <div className="course-combo-div">
 
-</div>
+                    <p className="combo-label">
+                        SPECIAL COMBO OFFER
+                    </p>
+
+                    <h2>
+                        Save More with Our Combo Package!
+                    </h2>
+
+                    <p className="-course">
+                        {course?.comboDescription}
+                    </p>
+
+                    <div className="combo-bottom">
+
+                        <div>
+                            <p>Combo Price</p>
+                            <h3>${course?.comboPrice}</h3>
+                        </div>
+
+                        <div>
+                            <p>Duration</p>
+                            <h3>{course?.comboDuration}</h3>
+                        </div>
+
+                        <button className="combo-btn-course">
+                            Book Combo Now
+                        </button>
+
+                    </div>
+
+                </div>
+            )}
 
 
-{/* DESCRIPTION */}
+            {/* DESCRIPTION */}
 
-<div className="course-section">
+            <div className="course-section">
 
-<h3>Course Description</h3>
+                <h3>Course Description</h3>
 
-{course?.description?.map((line,index)=>(
-<p key={index}>{line}</p>
-))}
+                {course?.description?.map((line, index) => (
+                    <p key={index}>{line}</p>
+                ))}
 
-</div>
-
-
-{/* REQUIREMENTS */}
-
-<div className="course-section">
-
-<h3>Entry Requirements</h3>
-
-{course?.requirements?.map((line,index)=>(
-<p key={index}>⚡ {line}</p>
-))}
-
-</div>
+            </div>
 
 
-{/* FEES */}
+            {/* REQUIREMENTS */}
 
-<div className="course-section">
+            <div className="course-section">
 
-<h3>Fees and Charges</h3>
+                <h3>Entry Requirements</h3>
 
-{course?.feesCharges?.map((line,index)=>(
-<p key={index}>✔ {line}</p>
-))}
+                {course?.requirements?.map((line, index) => (
+                    <p key={index}>⚡ {line}</p>
+                ))}
 
-</div>
+            </div>
 
-</div>
 
-)
+            {/* FEES */}
+
+            <div className="course-section">
+
+                <h3>Fees and Charges</h3>
+
+                {course?.feesCharges?.map((line, index) => (
+                    <p key={index}>✔ {line}</p>
+                ))}
+
+            </div>
+
+        </div>
+
+    )
 
 }
 

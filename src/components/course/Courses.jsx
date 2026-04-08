@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ScheduleModal from "../ScheduleModal";
 import { useLocation } from "react-router-dom"
+import ManageCategories from "../course/ManageCategories";
+import ReorderCoursesModal from "../course/Reordercoursesmodal"; 
 
 function Courses() {
 
@@ -14,6 +16,8 @@ function Courses() {
     const [search, setSearch] = useState("");
     const [openSchedule, setOpenSchedule] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [showManageCategories, setShowManageCategories] = useState(false);
+    const [showReorderCourses, setShowReorderCourses] = useState(false); // ← NEW
     const location = useLocation()
     const query = new URLSearchParams(location.search)
     const pubsearch = query.get("search")
@@ -77,10 +81,10 @@ function Courses() {
                 </div>
                 <div className="course-management-div">
                    
-                    <p>
+                    <p onClick={() => setShowManageCategories(true)}>
                         <i className="fa-solid fa-tag"></i>Manage Categories
                     </p>
-                    <p>
+                    <p onClick={() => setShowReorderCourses(true)}> {/* ← NEW onClick */}
                         ☰ Reorder Courses
                     </p>
                     <p onClick={() => setShowModal(true)}>
@@ -220,6 +224,19 @@ function Courses() {
                     close={() => setOpenSchedule(false)}
                 />
             )}
+
+            <ManageCategories
+                isOpen={showManageCategories}
+                onClose={() => setShowManageCategories(false)}
+            />
+
+            {/* ← NEW: Reorder Courses Modal */}
+            <ReorderCoursesModal
+                isOpen={showReorderCourses}
+                onClose={() => setShowReorderCourses(false)}
+                courses={courses}
+                refreshCourses={fetchCourses}
+            />
 
         </section>
     );

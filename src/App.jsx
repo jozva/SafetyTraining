@@ -56,7 +56,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/course/:id" element={<CourseDetails />} />
-                <Route path="/book-now/:id" element={<BookNow />} />
+                <Route path="/book-now/course/:id" element={<BookNow />} />
                 <Route path="/book-now" element={<BookNow />} />
                 <Route path="/course-result" element={<CourseResult />} />
                 <Route path="/llnd-assesment-complete" element={<LLNDAssessmentComplete/>}/>
@@ -72,7 +72,7 @@ function App() {
                 <Route path="/student" element={<PortalLayout user={user} />}>
                     <Route index element={<StudentDashboard />} />
                      <Route path="/student/my-courses" element={<StudentMyCourses/>}/>
-                     <Route path="/student/schedule" element={<StudentSchedule/>}/>
+                     <Route path="/student/shedule" element={<StudentSchedule/>}/>
                      <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
                      <Route path="/student/results" element={<StudentResults/>}/>
                      <Route path="/student/certificates" element={<StudentCertificate/>}/>
