@@ -5,7 +5,7 @@ import axios from "axios";
 import ScheduleModal from "../ScheduleModal";
 import { useLocation } from "react-router-dom"
 import ManageCategories from "../course/ManageCategories";
-import ReorderCoursesModal from "./ReorderCoursesModal"; 
+import ReorderCourseModal from "./ReorderCourseModal"; 
 
 function Courses() {
 
@@ -231,7 +231,7 @@ function Courses() {
             />
 
             {/* ← NEW: Reorder Courses Modal */}
-            <ReorderCoursesModal
+            <ReorderCourseModal
                 isOpen={showReorderCourses}
                 onClose={() => setShowReorderCourses(false)}
                 courses={courses}

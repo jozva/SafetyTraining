@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import "./ReorderCoursesModal.css";
+import "./ReorderCourseModal.css";
 
 const API = "https://safety-training-academy-1ws0.onrender.com/api/courses";
 
-export default function ReorderCoursesModal({ isOpen, onClose, courses, refreshCourses }) {
+export default function ReorderCourseModal({ isOpen, onClose, courses, refreshCourses }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [orderedCourses, setOrderedCourses] = useState([]);
     const [isReordering, setIsReordering] = useState(false);
