@@ -4,6 +4,7 @@ import "../styles/BookNow.css";
 import Payment from "../components/Payment";
 import LLNDAssessment from "../components/llnd/LLNDAssessment";
 import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegister";
+import CourseSelectionSuccess from "../components/course/CourseSelectionSuccess";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 
 
@@ -184,8 +185,10 @@ function BookNow() {
                         setPaymentData={setPaymentData}
                     />
                 )}
-
-                {step === 3 && (
+{step===3&&(
+    <CourseSelectionSuccess/>
+)}
+                {/* {step === 3 && (
                     <LLNDAssessment
                         userDetails={userDetails}
                         onComplete={() => isCompanyEnroll ? navigate("/enrollment-success", { state: { email: userDetails.email } }) : setStep(4)}
@@ -199,7 +202,7 @@ function BookNow() {
                         section={enrollSection}
                         setSection={setEnrollSection}
                     />
-                )}
+                )} */}
 
                 {/* Buttons */}
                 <div className={`next-wrapper ${step > 1 ? "has-prev" : ""}`}>
