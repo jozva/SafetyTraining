@@ -26,7 +26,7 @@ function Courses() {
     useEffect(() => {
         fetchCourses();
     }, []);
-
+ 
     const fetchCourses = async () => {
         try {
             const res = await axios.get("https://safety-training-academy-1ws0.onrender.com/api/courses");
