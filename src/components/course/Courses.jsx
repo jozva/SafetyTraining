@@ -5,7 +5,7 @@ import axios from "axios";
 import ScheduleModal from "../ScheduleModal";
 import { useLocation } from "react-router-dom"
 import ManageCategories from "../course/ManageCategories";
-import ReorderCoursesModal from "../course/Reordercoursesmodal"; 
+import ReorderCoursesModal from "./ReorderCoursesModal"; 
 
 function Courses() {
 
