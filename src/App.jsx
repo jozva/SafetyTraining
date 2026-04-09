@@ -72,7 +72,7 @@ function App() {
                 <Route path="/student" element={<PortalLayout user={user} />}>
                     <Route index element={<StudentDashboard />} />
                      <Route path="/student/my-courses" element={<StudentMyCourses/>}/>
-                     <Route path="/student/shedule" element={<StudentSchedule/>}/>
+                     <Route path="/student/schedule" element={<StudentSchedule/>}/>
                      <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
                      <Route path="/student/results" element={<StudentResults/>}/>
                      <Route path="/student/certificates" element={<StudentCertificate/>}/>

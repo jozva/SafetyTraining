@@ -82,7 +82,7 @@ export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
         </div>
 
         {/* Back to Home Button */}
-        <button className="back-btn" onClick={()=>{navigate("/")}}>
+        <button className="back-btn-enrl-wrap" onClick={()=>{navigate("/")}}>
           Back to Home
         </button>
 

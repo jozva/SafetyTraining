@@ -5,7 +5,7 @@ import EnrollmentSection3 from "./EnrollmentSection3"
 import EnrollmentSection4 from "./EnrollmentSection4"
 import EnrollmentSection5 from "./EnrollmentSection5"
 
-const EnrollmentRegister = forwardRef(({ userDetails, section, setSection }, ref) => {
+const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, setSection }, ref) => {
 
 
 
@@ -99,6 +99,57 @@ const EnrollmentRegister = forwardRef(({ userDetails, section, setSection }, ref
             mobilePhone: userDetails.phone || ""
         }))
     }, [userDetails])
+
+
+    useEffect(() => {
+    if (!savedFormData) return;
+
+    setFormData(prev => ({
+      ...prev,
+      title: savedFormData.personalDetails?.title || prev.title,
+      surname: savedFormData.personalDetails?.surname || prev.surname,
+      givenName: savedFormData.personalDetails?.givenName || prev.givenName,
+      middleName: savedFormData.personalDetails?.middleName || prev.middleName,
+      preferredName: savedFormData.personalDetails?.preferredName || prev.preferredName,
+      dob: savedFormData.personalDetails?.dob || prev.dob,
+      gender: savedFormData.personalDetails?.gender || prev.gender,
+      email: savedFormData.personalDetails?.email || prev.email,
+      homePhone: savedFormData.personalDetails?.homePhone || prev.homePhone,
+      mobilePhone: savedFormData.personalDetails?.mobilePhone || prev.mobilePhone,
+      residentialAddress: savedFormData.address?.residential?.address || prev.residentialAddress,
+      suburb: savedFormData.address?.residential?.suburb || prev.suburb,
+      state: savedFormData.address?.residential?.state || prev.state,
+      postcode: savedFormData.address?.residential?.postcode || prev.postcode,
+      postalAddress: savedFormData.address?.postal?.address || prev.postalAddress,
+      postalSuburb: savedFormData.address?.postal?.suburb || prev.postalSuburb,
+      postalState: savedFormData.address?.postal?.state || prev.postalState,
+      postalPostcode: savedFormData.address?.postal?.postcode || prev.postalPostcode,
+      emergencyName: savedFormData.emergencyContact?.name || prev.emergencyName,
+      emergencyRelationship: savedFormData.emergencyContact?.relationship || prev.emergencyRelationship,
+      emergencyContact: savedFormData.emergencyContact?.contactNumber || prev.emergencyContact,
+      emergencyPermission: savedFormData.emergencyContact?.consent ? "yes" : "no",
+      educationLevel: savedFormData.education?.highestLevel || prev.educationLevel,
+      yearCompleted: savedFormData.education?.yearCompleted || prev.yearCompleted,
+      schoolName: savedFormData.education?.schoolName || prev.schoolName,
+      schoolState: savedFormData.education?.schoolState || prev.schoolState,
+      schoolPostcode: savedFormData.education?.schoolPostcode || prev.schoolPostcode,
+      schoolCountry: savedFormData.education?.schoolCountry || prev.schoolCountry,
+      hasQualifications: savedFormData.qualifications?.hasQualification ? "yes" : "no",
+      qualificationLevels: savedFormData.qualifications?.types || prev.qualificationLevels,
+      employmentStatus: savedFormData.employment?.status || prev.employmentStatus,
+      employerName: savedFormData.employment?.details?.employerName || prev.employerName,
+      supervisorName: savedFormData.employment?.details?.supervisorName || prev.supervisorName,
+      workplaceAddress: savedFormData.employment?.details?.address || prev.workplaceAddress,
+      employerEmail: savedFormData.employment?.details?.email || prev.employerEmail,
+      employerPhone: savedFormData.employment?.details?.phone || prev.employerPhone,
+      trainingReason: savedFormData.trainingReason || prev.trainingReason,
+      countryOfBirth: savedFormData.language?.countryOfBirth || prev.countryOfBirth,
+      otherLanguage: savedFormData.language?.otherLanguage || prev.otherLanguage,
+      hasDisability: savedFormData.specialNeeds?.hasDisability ? "yes" : "no",
+      disabilityTypes: savedFormData.specialNeeds?.types || prev.disabilityTypes,
+      disabilityNotes: savedFormData.specialNeeds?.other || prev.disabilityNotes,
+    }));
+  }, [savedFormData]);
 
     // ✅ VALIDATION FUNCTION
     const validateForm = () => {

@@ -1,104 +1,110 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./StudentMyCourses.css";
-
-const mockEnrolledCourses = [
-  {
-    id: 1,
-    title: "White Card : Prepare to Work Safely in the Construction Industry",
-    enrolledDate: "Apr 1, 2026",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80",
-    status: "Active",
-    payment: "Pending Verification",
-    lln: "Completed",
-    form: "Approved",
-    progress: 10,
-  },
-];
-
-const mockBrowseCourses = [
-  {
-    id: 1,
-    title: "Provide First Aid in an Education and Care Setting",
-    category: "First Aid Courses",
-    nextBatch: "May 1, 2026",
-    duration: "1 Day",
-    enrolled: 7,
-    price: "$90",
-    dates: ["May 1, 2026"],
-    image: "https://images.unsplash.com/photo-1516841273335-e39b37888115?w=400&q=80",
-  },
-  {
-    id: 2,
-    title: "Certificate III in Carpentry Course Information",
-    category: "Certificate Courses",
-    nextBatch: "Contact us",
-    duration: null,
-    enrolled: 0,
-    price: "$3000",
-    tags: ["Theory", "Practical"],
-    image: "https://images.unsplash.com/photo-1503387837-b154d5074bd2?w=400&q=80",
-  },
-  {
-    id: 3,
-    title: "Certificate III in Painting and Decorating",
-    category: "Certificate Courses",
-    nextBatch: "Contact us",
-    duration: null,
-    enrolled: 0,
-    price: "$2700",
-    tags: ["Theory", "Practical"],
-    image: "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400&q=80",
-  },
-  {
-    id: 4,
-    title: "Certificate III in Wall and Floor Tiling (RPL)",
-    category: "Certificate Courses",
-    nextBatch: "Contact us",
-    duration: "1 Day",
-    enrolled: 0,
-    price: "$1900",
-    tags: ["Theory", "Practical"],
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
-  },
-  {
-    id: 5,
-    title: "Conduct articulated haul truck operations",
-    category: "Earthmoving Courses",
-    nextBatch: "Apr 1, 2026",
-    duration: "1 Day Course",
-    enrolled: 6,
-    price: "$350",
-    dates: ["Apr 1, 2026"],
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80",
-  },
-  {
-    id: 6,
-    title: "Conduct Civil Construction Excavator Operations",
-    category: "Earthmoving Courses",
-    nextBatch: "Apr 1, 2026",
-    duration: "1",
-    enrolled: 4,
-    price: "$340",
-    dates: ["Apr 1, 2026"],
-    image: "https://images.unsplash.com/photo-1416169607655-0c2b3ce2e1cc?w=400&q=80",
-  },
-];
+import { useNavigate } from "react-router-dom";
+import LLNDAssessment from "../llnd/LLNDAssessment";
 
 const statusColors = {
   Active: "status-active",
   "Pending Verification": "status-pending",
   Completed: "status-completed",
   Approved: "status-approved",
+  paid: "status-active",
+  Pending: "status-pending",
 };
 
 export default function StudentMyCourses() {
   const [tab, setTab] = useState("enrolled");
   const [search, setSearch] = useState("");
   const [selectedDates, setSelectedDates] = useState({});
+  const [showAssessment, setShowAssessment] = useState(false);
 
-  const filtered = mockBrowseCourses.filter((c) =>
-    c.title.toLowerCase().includes(search.toLowerCase())
+  const [dashboardData, setDashboardData] = useState(null);
+  const [browseCourses, setBrowseCourses] = useState([]);
+  const [enrolledCourseDetails, setEnrolledCourseDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const fetchData = async () => {
+    try {
+      const studentId = user?.id;
+      if (!studentId) throw new Error("Student ID not found. Please login again.");
+
+      const [dashRes, coursesRes] = await Promise.all([
+        fetch(`https://safety-training-academy-tho8.onrender.com/api/student/dashboard/${studentId}`),
+        fetch(`https://safety-training-academy-tho8.onrender.com/api/courses`)
+      ]);
+
+      if (!dashRes.ok) throw new Error("Failed to fetch dashboard data");
+      if (!coursesRes.ok) throw new Error("Failed to fetch courses");
+
+      const dash = await dashRes.json();
+      const courses = await coursesRes.json();
+
+      setDashboardData(dash);
+      setBrowseCourses(courses);
+
+      if (dash.enrolledCourses?.length > 0) {
+        const courseDetailsPromises = dash.enrolledCourses.map(enrolled =>
+          fetch(`https://safety-training-academy-tho8.onrender.com/api/courses/${enrolled.courseId}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(courseData => ({
+              ...enrolled,
+              image: courseData?.image || null,
+              enrolledDate: courseData?.createdAt
+                ? new Date(courseData.createdAt).toLocaleDateString("en-AU", {
+                  day: "numeric", month: "short", year: "numeric"
+                })
+                : null,
+            }))
+        );
+        const details = await Promise.all(courseDetailsPromises);
+        setEnrolledCourseDetails(details);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleAssessmentComplete = () => {
+    setShowAssessment(false);
+    fetchData();
+  };
+
+  const filtered = browseCourses.filter((c) =>
+    c.title?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (showAssessment) {
+    return (
+      <LLNDAssessment
+        onComplete={handleAssessmentComplete}
+        userDetails={{
+          name: user?.name || "",
+          email: user?.email || "",
+          phone: user?.phone || "",
+        }}
+      />
+    );
+  }
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const scoreDisplay = Math.round(dashboardData?.assessmentScore || 0);
+  const assessmentPassed = dashboardData?.assessmentPassed;
+  const formApproved = dashboardData?.enrollmentFormApproved;
+  const paymentVerified = dashboardData?.paymentVerified ?? false; // ✅ fixed
 
   return (
     <div className="mc-wrapper">
@@ -107,38 +113,45 @@ export default function StudentMyCourses() {
         <p className="mc-subtitle">Manage your enrolled courses and discover new certifications</p>
       </div>
 
-      {/* Banners */}
-      <div className="mc-banner mc-banner--success">
-        <span className="mc-banner__icon">✓</span>
-        <div>
-          <strong>Pre-Enrollment Assessment Passed</strong>
-          <p>Score: 92.31% – You can now enroll in courses. You can also retake LLND anytime if you want to improve your result.</p>
-        </div>
-      </div>
-
-      <div className="mc-banner mc-banner--optional">
-        <div className="mc-banner__left">
-          <span className="mc-optional-badge">Optional</span>
+      {assessmentPassed && (
+        <div className="mc-banner mc-banner--success">
+          <span className="mc-banner__icon">✓</span>
           <div>
-            <strong className="mc-banner__title--purple">LLND Assessment Retake Available</strong>
-            <p>You have already passed. Retake anytime if you want to improve your score.</p>
+            <strong>Pre-Enrollment Assessment Passed</strong>
+            <p>Score: {scoreDisplay}% – You can now enroll in courses. You can also retake LLND anytime if you want to improve your result.</p>
           </div>
         </div>
-        <button className="mc-btn mc-btn--purple">
-          <span>📖</span> Retake Assessment
-        </button>
-      </div>
+      )}
 
-      <div className="mc-banner mc-banner--success">
-        <span className="mc-banner__icon">✓</span>
-        <div>
-          <strong>Enrollment Form Approved</strong>
-          <p>Your enrollment form has been approved.</p>
-          <a href="#" className="mc-link">View Form</a>
+      {assessmentPassed && (
+        <div className="mc-banner mc-banner--optional">
+          <div className="mc-banner__left">
+            <span className="mc-optional-badge">Optional</span>
+            <div>
+              <strong className="mc-banner__title--purple">LLND Assessment Retake Available</strong>
+              <p>You have already passed. Retake anytime if you want to improve your score.</p>
+            </div>
+          </div>
+          <button
+            className="mc-btn mc-btn--purple"
+            onClick={() => setShowAssessment(true)}
+          >
+            <span>📖</span> Retake Assessment
+          </button>
         </div>
-      </div>
+      )}
 
-      {/* Tabs */}
+      {formApproved && (
+        <div className="mc-banner mc-banner--success">
+          <span className="mc-banner__icon">✓</span>
+          <div>
+            <strong>Enrollment Form Approved</strong>
+            <p>Your enrollment form has been approved.</p>
+            <a href="#" className="mc-link">View Form</a>
+          </div>
+        </div>
+      )}
+
       <div className="mc-tabs">
         <button
           className={`mc-tab ${tab === "enrolled" ? "mc-tab--active" : ""}`}
@@ -154,44 +167,85 @@ export default function StudentMyCourses() {
         </button>
       </div>
 
-      {/* Enrolled Tab */}
       {tab === "enrolled" && (
         <div className="mc-enrolled">
-          {mockEnrolledCourses.map((course) => (
-            <div key={course.id} className="mc-course-card">
-              <img src={course.image} alt={course.title} className="mc-course-card__img" />
+          {enrolledCourseDetails?.length === 0 && (
+            <p>No enrolled courses found.</p>
+          )}
+          {enrolledCourseDetails?.map((course, index) => (
+            <div key={index} className="mc-course-card">
+              {course.image && (
+                <img src={course.image} alt={course.courseName} className="mc-course-card__img" />
+              )}
               <div className="mc-course-card__body">
                 <div className="mc-course-card__top">
                   <div>
-                    <h3 className="mc-course-card__title">{course.title}</h3>
-                    <p className="mc-course-card__date">Enrolled: {course.enrolledDate}</p>
+                    <h3 className="mc-course-card__title">{course.courseName}</h3>
+                    {course.enrolledDate && (
+                      <p className="mc-course-card__date">Enrolled: {course.enrolledDate}</p>
+                    )}
                   </div>
                   <div className="mc-course-card__badges">
-                    <span className={`mc-badge ${statusColors[course.status]}`}>{course.status}</span>
-                    <span className={`mc-badge ${statusColors[course.payment]}`}>Payment: {course.payment}</span>
-                    <span className={`mc-badge ${statusColors[course.lln]}`}>LLN: {course.lln}</span>
-                    <span className={`mc-badge ${statusColors[course.form]}`}>Form: {course.form}</span>
+                    <span className="mc-badge status-active">Active</span>
+                    <span className={`mc-badge ${paymentVerified ? "status-active" : "status-pending"}`}>
+                      Payment: {paymentVerified ? "Paid" : "Pending"}
+                    </span>
+                    <span className={`mc-badge ${assessmentPassed ? "status-completed" : "status-pending"}`}>
+                      LLN: {assessmentPassed ? "Completed" : "Pending"}
+                    </span>
+                    <span className={`mc-badge ${formApproved ? "status-approved" : "status-pending"}`}>
+                      Form: {formApproved ? "Approved" : "Required"}
+                    </span>
                   </div>
                 </div>
                 <div className="mc-course-card__progress-section">
                   <div className="mc-course-card__progress-label">
                     <span>Overall Progress</span>
-                    <span className="mc-course-card__progress-pct">{course.progress}%</span>
+                    <span className="mc-course-card__progress-pct">10%</span>
                   </div>
                   <div className="mc-progress-bar">
-                    <div className="mc-progress-bar__fill" style={{ width: `${course.progress}%` }} />
+                    <div className="mc-progress-bar__fill" style={{ width: "10%" }} />
                   </div>
                 </div>
-                <button className="mc-btn mc-btn--purple mc-btn--sm">
-                  <span>📖</span> Retake LLND Assessment
-                </button>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {!formApproved && (
+                    <button
+                      className="mc-btn mc-btn--outline mc-btn--sm"
+                      onClick={() => {
+                        if (!paymentVerified) {
+                          alert("Please wait until admin verifies your payment before completing the enrollment form.");
+                          return;
+                        }
+                        // ✅ ADD THIS CHECK
+                        if (!assessmentPassed) {
+                          alert("Please complete and pass the LLND Assessment before filling the enrollment form.");
+                          return;
+                        }
+                        navigate("/student/enrollment-form");
+                      }}
+                    >
+                      📄 Complete Enrollment Form
+                    </button>
+                  )}
+                  <button
+                    className="mc-btn mc-btn--purple mc-btn--sm"
+                    onClick={() => {
+                      if (!paymentVerified) { // ✅ fixed
+                        alert("Please wait until admin verifies your payment before taking the assessment.");
+                        return;
+                      }
+                      setShowAssessment(true);
+                    }}
+                  >
+                    <span>📖</span> Retake LLND Assessment
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Browse Tab */}
       {tab === "browse" && (
         <div className="mc-browse">
           <div className="mc-search-wrap">
@@ -205,17 +259,17 @@ export default function StudentMyCourses() {
           </div>
           <div className="mc-grid">
             {filtered.map((course) => (
-              <div key={course.id} className="mc-browse-card">
+              <div key={course._id} className="mc-browse-card">
                 <div className="mc-browse-card__img-wrap">
                   <img src={course.image} alt={course.title} className="mc-browse-card__img" />
-                  <span className="mc-category-badge">{course.category}</span>
+                  <span className="mc-category-badge">{course.title}</span>
                 </div>
                 <div className="mc-browse-card__body">
                   <h3 className="mc-browse-card__title">{course.title}</h3>
-                  <p className="mc-browse-card__batch">Next batch starts: {course.nextBatch}</p>
+                  <p className="mc-browse-card__batch">Next batch starts: {course.nextBatch || "Contact us"}</p>
                   <div className="mc-browse-card__meta">
                     {course.duration && <span>⏱ {course.duration}</span>}
-                    <span>👥 {course.enrolled}</span>
+                    <span>👥 {course.enrolled || 0}</span>
                   </div>
                   {course.tags && (
                     <div className="mc-tags">
@@ -224,13 +278,13 @@ export default function StudentMyCourses() {
                       ))}
                     </div>
                   )}
-                  {course.dates && (
+                  {course.dates && course.dates.length > 0 && (
                     <div className="mc-date-select">
                       <label>📅 Select a Date</label>
                       <select
-                        value={selectedDates[course.id] || ""}
+                        value={selectedDates[course._id] || ""}
                         onChange={(e) =>
-                          setSelectedDates({ ...selectedDates, [course.id]: e.target.value })
+                          setSelectedDates({ ...selectedDates, [course._id]: e.target.value })
                         }
                       >
                         <option value="">Choose a date</option>
