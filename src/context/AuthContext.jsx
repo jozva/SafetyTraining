@@ -4,29 +4,36 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // 🔥 important
 
-useEffect(() => {
-const storedUser = JSON.parse(localStorage.getItem("user"));
-if(storedUser){
-setUser(storedUser);
-}
-}, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-const login = (userData) => {
-localStorage.setItem("user", JSON.stringify(userData));
-setUser(userData);
-};
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
+    }
 
-const logout = () => {
-localStorage.removeItem("user");
-localStorage.removeItem("token");
-setUser(null);
-};
+    setLoading(false); // 🔥 after check complete
+  }, []);
 
-return (
-<AuthContext.Provider value={{ user, login, logout }}>
-{children}
-</AuthContext.Provider>
-);
+  const login = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
+  // 🔥 prevent premature render
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading,setUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

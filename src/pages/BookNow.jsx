@@ -7,12 +7,13 @@ import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegis
 import CourseSelectionSuccess from "../components/course/CourseSelectionSuccess";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 
-
-
 function BookNow() {
     const navigate = useNavigate();
     const enrollRef = useRef(null);
     const { id: enrollId } = useParams();
+    const [searchParams] = useSearchParams(); // ✅
+    const bookingType = searchParams.get("type"); // ✅
+
     const [isCompanyEnroll, setIsCompanyEnroll] = useState(false);
     const [isLoading, setIsLoading] = useState(!!enrollId);
     const [enrollmentType, setEnrollmentType] = useState("individual");
@@ -24,6 +25,16 @@ function BookNow() {
     const [triggerValidation, setTriggerValidation] = useState(false);
     const [paymentData, setPaymentData] = useState({});
 
+    // ✅ coursePrice calculate
+    const coursePrice = selectedCourse
+        ? selectedCourse.experienceBasedBooking
+            ? bookingType === "with-experience"
+                ? selectedCourse.withExperiencePrice
+                : bookingType === "without-experience"
+                    ? selectedCourse.withoutExperiencePrice
+                    : selectedCourse.sellingPrice
+            : selectedCourse.sellingPrice
+        : 0;
 
     useEffect(() => {
         if (selectedCourse?._id) {
@@ -42,10 +53,9 @@ function BookNow() {
 
         setIsLoading(true);
 
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/book-now/check-role?id=${enrollId}`)
+        fetch(`http://localhost:8000/api/book-now/check-role?id=${enrollId}`)
             .then(res => res.json())
             .then(data => {
-                console.log("API RESPONSE:", data);
 
                 if (data.role === "company" || data.role === "Company") {
                     setIsCompanyEnroll(true);
@@ -69,7 +79,7 @@ function BookNow() {
     const effectiveStep = isCompanyEnroll ? step - 1 : step;
     const progress = (effectiveStep / totalSteps) * 100;
 
-   useEffect(() => {
+    useEffect(() => {
         if (step === 1) {
             setSelectedSession(null);
             localStorage.removeItem("enrollId");
@@ -81,43 +91,37 @@ function BookNow() {
 
     if (isLoading) return <div>Loading...</div>;
 
-    const createFlow = async () => {
+    const createFlow = async (slipUrl = "") => { // ✅ slipUrl parameter
         try {
             const studentId = localStorage.getItem("enrollId");
+            if (!studentId) return;
 
-            if (!studentId) {
+            const formData = new FormData();
+            formData.append("studentId", studentId);
+            formData.append("courseId", selectedCourse._id);
+            formData.append("courseCategory", selectedCourse.category);
+            formData.append("courseName", selectedCourse.title);
+            formData.append("price", coursePrice);
+            formData.append("enrollmentType", enrollmentType);
+            formData.append("sessionDate", selectedSession?.date);
+            formData.append("startTime", selectedSession?.startTime);
+            formData.append("endTime", selectedSession?.endTime);
+            formData.append("paymentMethod", paymentData.paymentMethod || "");
+            formData.append("transactionId", paymentData.transactionId || "");
+            formData.append("slipUrl", slipUrl); // ✅
 
-                console.error("No studentId found");
-                return;
-            }
-
-            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/create", {
+            const res = await fetch("http://localhost:8000/api/flow/create", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    studentId,
-                    course: {
-                        courseId: selectedCourse._id,
-                        courseName: selectedCourse.category,
-                        price: selectedCourse.sellingPrice
-                    },
-                    enrollmentType
-                })
+                body: formData,
             });
 
             const data = await res.json();
-
             localStorage.setItem("flowId", data._id);
-
-            console.log("FLOW CREATED:", data);
 
         } catch (err) {
             console.error(err);
         }
     };
-
     return (
         <section className="enroll-page">
 
@@ -126,10 +130,10 @@ function BookNow() {
 
             <div className="enroll-card">
 
-                {/* Stepper */}
                 <p className="home-pg-btn" style={{ width: "fit-content", padding: "10px 20px" }} onClick={() => { navigate("/") }}>
                     Back to Home
                 </p>
+
                 <div className="stepper">
                     <div className="stepper-wo-pbar">
 
@@ -157,8 +161,6 @@ function BookNow() {
                     </div>
                 </div>
 
-                {/* Step Content */}
-
                 {step === 1 && (
                     <CourseSelection
                         enrollmentType={enrollmentType}
@@ -174,6 +176,7 @@ function BookNow() {
                 {step === 2 && (
                     <Payment
                         selectedCourse={selectedCourse}
+                        coursePrice={coursePrice} // ✅ coursePrice pass பண்றோம்
                         setUserDetails={setUserDetails}
                         enrollmentType={enrollmentType}
                         setEnrollmentType={setEnrollmentType}
@@ -185,26 +188,19 @@ function BookNow() {
                         setPaymentData={setPaymentData}
                     />
                 )}
-{step===3&&(
-    <CourseSelectionSuccess/>
-)}
-                {/* {step === 3 && (
-                    <LLNDAssessment
-                        userDetails={userDetails}
-                        onComplete={() => isCompanyEnroll ? navigate("/enrollment-success", { state: { email: userDetails.email } }) : setStep(4)}
-                    />
+
+                {step === 3 && (
+                    <CourseSelectionSuccess enrollmentData={{
+                        selectedCourse: selectedCourse,
+                        courseDate: selectedSession?.date, // ✅ date from session
+                        courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`, // ✅ time
+                        coursePrice: coursePrice, // ✅ dynamic price
+                        paymentMethod: paymentData.paymentMethod, // ✅ selected payment method
+                        email: paymentData.email,
+                        name: paymentData.name,
+                    }} />
                 )}
 
-                {step === 4 && (
-                    <EnrollmentRegister
-                        ref={enrollRef}
-                        userDetails={userDetails}
-                        section={enrollSection}
-                        setSection={setEnrollSection}
-                    />
-                )} */}
-
-                {/* Buttons */}
                 <div className={`next-wrapper ${step > 1 ? "has-prev" : ""}`}>
 
                     {step > 1 && step !== 3 && (
@@ -218,7 +214,6 @@ function BookNow() {
                                     }
                                     return;
                                 }
-
                                 setStep(prev => prev - 1);
                             }}
                         >
@@ -229,48 +224,47 @@ function BookNow() {
                     {step !== 3 && (
                         <button
                             className="next-btn"
-                            disabled={
-                                (step === 1 && !selectedSession) 
-                            }
+                            disabled={step === 1 && !selectedSession}
                             onClick={async () => {
 
                                 if (step === 2) {
                                     setTriggerValidation(true);
-                                     console.log("isPaymentValid:", isPaymentValid);
 
                                     if (!isPaymentValid) return;
 
                                     try {
-
-                                        console.log("try block entered");
                                         let studentId = localStorage.getItem("enrollId");
-                                        console.log("studentId from localStorage:", studentId);
+                                        let slipUrl = ""; // ✅
 
-                                        // ✅ create only if not exists
                                         if (!studentId) {
-                                            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enroll/enrollment", {
+                                            const formData = new FormData();
+                                            formData.append("name", paymentData.name);
+                                            formData.append("email", paymentData.email);
+                                            formData.append("phone", paymentData.phone);
+                                            formData.append("paymentMethod", paymentData.paymentMethod);
+                                            formData.append("transactionId", paymentData.transactionId || "");
+                                            if (paymentData.paymentSlip) {
+                                                formData.append("paymentSlip", paymentData.paymentSlip);
+                                            }
+                                            formData.append("courseId", selectedCourse?._id);
+                                            formData.append("sessionDate", selectedSession?.date);
+                                            formData.append("startTime", selectedSession?.startTime);
+                                            formData.append("endTime", selectedSession?.endTime);
+
+                                            const res = await fetch("http://localhost:8000/api/enroll/enrollment", {
                                                 method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json"
-                                                },
-                                                body: JSON.stringify({
-                                                    ...userDetails,
-                                                    payment: paymentData,
-                                                    courseId: selectedCourse?._id
-                                                })
+                                                body: formData,
                                             });
 
                                             const data = await res.json();
                                             studentId = data._id;
-
                                             localStorage.setItem("enrollId", studentId);
+                                            slipUrl = data.courses?.[0]?.slipUrl || ""; // ✅
                                         }
 
-                                        // ✅ create flow only once
                                         const flowId = localStorage.getItem("flowId");
-
                                         if (!flowId) {
-                                            await createFlow();
+                                            await createFlow(slipUrl); // ✅
                                         }
 
                                         setStep(3);
@@ -282,7 +276,6 @@ function BookNow() {
                                     return;
                                 }
 
-                                // 🔥 Enrollment flow
                                 if (step === 4) {
 
                                     if (enrollSection === 5) {
@@ -307,7 +300,6 @@ function BookNow() {
                                     return;
                                 }
 
-                                // 🔥 Normal steps
                                 if (isCompanyEnroll && step === 2) {
                                     setStep(3);
                                 } else if (step < totalSteps) {

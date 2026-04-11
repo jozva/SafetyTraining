@@ -30,7 +30,7 @@ const Payment = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/flow/payments");
+      const res = await axios.get("http://localhost:8000/api/flow/payments");
 
       setPayments(res.data.payments);
       setStats(res.data.stats);
@@ -43,41 +43,41 @@ const Payment = () => {
   };
 
   const handleVerify = async () => {
-  await axios.put(
-    `https://safety-training-academy-tho8.onrender.com/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
-    { status: "success" }
-  );
-
-  fetchPayments();
-};
-
-
-const handleReject = async () => {
-  try {
-    if (!selectedPayment?.enrollmentId || !selectedPayment?.itemId) {
-      alert("Invalid payment data");
-      return;
-    }
-
-    if (!rejectionReason) {
-      alert("Enter rejection reason");
-      return;
-    }
-
     await axios.put(
-      `https://safety-training-academy-tho8.onrender.com/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
-      {
-        status: "failed",
-        reason: rejectionReason
-      }
+      `http://localhost:8000/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
+      { status: "success" }
     );
 
     fetchPayments();
+  };
 
-  } catch (err) {
-    console.error("Reject Error:", err);
-  }
-};
+
+  const handleReject = async () => {
+    try {
+      if (!selectedPayment?.enrollmentId || !selectedPayment?.itemId) {
+        alert("Invalid payment data");
+        return;
+      }
+
+      if (!rejectionReason) {
+        alert("Enter rejection reason");
+        return;
+      }
+
+      await axios.put(
+        `http://localhost:8000/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
+        {
+          status: "failed",
+          reason: rejectionReason
+        }
+      );
+
+      fetchPayments();
+
+    } catch (err) {
+      console.error("Reject Error:", err);
+    }
+  };
 
   return (
     <div className="payment-container">
@@ -110,6 +110,8 @@ const handleReject = async () => {
                 <th>Booking date</th>
                 <th>Student</th>
                 <th>Course</th>
+                <th>Individual/Company</th>
+                <th>Transaction ID</th>
                 <th>Amount</th>
                 <th>Payment date</th>
                 <th>Status</th>
@@ -132,6 +134,8 @@ const handleReject = async () => {
                       <span className="course-code">{p.code}</span>
                     </div>
                   </td>
+                  <td>{p.type || "Individual"}</td>
+                  <td>{p.transId || "—"}</td>        {/* Transaction ID */}
                   <td className="amount">${p.amount}</td>
                   <td>{new Date(p.date).toLocaleDateString()}</td>
                   <td>
@@ -142,6 +146,7 @@ const handleReject = async () => {
                   <td>
                     <button className="review-btn" onClick={() => openReview(p)}>👁 Review</button>
                   </td>
+
                 </tr>
               ))}
             </tbody>
@@ -175,19 +180,23 @@ const handleReject = async () => {
               <div className="transaction-details">
                 <h4>Transaction Details</h4>
                 <div className="detail-row">
-                  <span><strong>ID:</strong> {selectedPayment.transId}</span>
-                  <span><strong>Amount:</strong> <span className="text-green">${selectedPayment.amount}</span></span>
+                  <p><strong>Amount:</strong> <span className="text-green">${selectedPayment.amount}</span></p>
+                  <p><strong>Transaction ID:</strong> {selectedPayment.transId}</p>
                 </div>
               </div>
 
               <div className="receipt-preview">
                 <div className="receipt-header">
-                  <span>Payment Receipt</span>
-                  <button className="download-btn">Download Receipt</button>
+                  {/* <span>Payment Receipt</span>
+                  
+                  <button className="download-btn">Download Receipt</button> */}
                 </div>
+                <img className="receipt-header-img" src={selectedPayment.slipUrl} alt="Receipt" />
                 <div className="pdf-placeholder">
                   <p>PDF Document</p>
-                  <button className="open-pdf">Open PDF in New Tab</button>
+                  <button className="open-pdf" onClick={() => window.open(selectedPayment.slipUrl, "_blank")}>
+                    Open PDF in New Tab
+                  </button>
                 </div>
               </div>
 
@@ -204,14 +213,14 @@ const handleReject = async () => {
 
             <div className="modal-footer">
               <button className="btn-secondary" onClick={() => setShowModal(false)}>Close</button>
-              <button className="btn-reject" onClick={()=>{
+              <button className="btn-reject" onClick={() => {
                 handleReject()
                 setShowModal(false)
-                }}>Reject</button>
-              <button className="btn-verify" onClick={()=>{
+              }}>Reject</button>
+              <button className="btn-verify" onClick={() => {
                 handleVerify()
                 setShowModal(false)
-                }}>Verify Payment</button>
+              }}>Verify Payment</button>
             </div>
           </div>
         </div>

@@ -1,5 +1,35 @@
 /* EnrollmentForms.css */
+/* ── Add these to your existing EnrollmentForms.css ── */
 
+.modal-action-approve {
+  background: #16a34a !important;
+  color: white !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.modal-action-approve:hover:not(:disabled) {
+  background: #15803d !important;
+}
+
+.modal-action-reject {
+  background: #dc2626 !important;
+  color: white !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.modal-action-reject:hover:not(:disabled) {
+  background: #b91c1c !important;
+}
+
+.modal-action-approve:disabled,
+.modal-action-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .ef-container {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #1a1a2e;

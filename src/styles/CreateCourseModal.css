@@ -47,7 +47,7 @@
 
 .modal-tabs .active {
     background: #7b2ff7;
-    color: white;
+    color: white !important;
 }
 
 .form-grid {

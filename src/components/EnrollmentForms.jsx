@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/EnrollmentForms.css";
-import { useEffect } from "react";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -20,8 +20,9 @@ function StatusBadge({ status }) {
 }
 
 /* ── MODAL ── */
-function EnrollmentModal({ form, onClose }) {
+function EnrollmentModal({ form, onClose, onStatusChange }) {
   const [activeTab, setActiveTab] = useState("Applicant");
+  const [updating, setUpdating] = useState(false);
   const tabs = ["Applicant", "USI", "Education", "Additional", "Declaration"];
 
   if (!form) return null;
@@ -45,6 +46,22 @@ function EnrollmentModal({ form, onClose }) {
     Rejected: { bg: "#fef2f2", border: "#fecaca", color: "#dc2626", icon: "✕" },
   };
   const sc = statusConfig[form.status] || statusConfig.Pending;
+
+  const handleStatus = async (status) => {
+    setUpdating(true);
+    try {
+      await axios.patch(
+        `http://localhost:8000/api/enrollment-form/${form.id}/status`,
+        { status }
+      );
+      onStatusChange(form.id, status);
+      onClose();
+    } catch (err) {
+      alert("Failed to update status");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -76,12 +93,46 @@ function EnrollmentModal({ form, onClose }) {
             </div>
           </div>
           <div className="modal-status-actions">
-            <button className="modal-action-btn" onClick={() => window.open(`/api/enrollment-form/${form.id}/pdf`, "_blank")}>
+            <button
+              className="modal-action-btn"
+              onClick={() => window.open(`/api/enrollment-form/${form.id}/pdf`, "_blank")}
+            >
               <i className="fa-regular fa-file"></i> View PDF
             </button>
-            <button className="modal-action-btn" onClick={() => window.open(`/print.html?id=${form.id}`, "_blank")}>
+            <button
+              className="modal-action-btn"
+              onClick={() => window.open(`/print.html?id=${form.id}`, "_blank")}
+            >
               <i className="fa-solid fa-print"></i> Print
             </button>
+
+            {/* ✅ Approve Button */}
+            {form.status !== "Approved" && (
+              <button
+                className="modal-action-btn modal-action-approve"
+                onClick={() => handleStatus("Approved")}
+                disabled={updating}
+              >
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {updating ? "..." : "Approve"}
+              </button>
+            )}
+
+            {/* ✅ Reject Button */}
+            {form.status !== "Rejected" && (
+              <button
+                className="modal-action-btn modal-action-reject"
+                onClick={() => handleStatus("Rejected")}
+                disabled={updating}
+              >
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                {updating ? "..." : "Reject"}
+              </button>
+            )}
           </div>
         </div>
 
@@ -168,7 +219,6 @@ function EnrollmentModal({ form, onClose }) {
                 </div>
               </div>
 
-              {/* Photo and ID Card */}
               <div className="modal-section">
                 <h4 className="modal-section-title">
                   <i className="fa-regular fa-user" style={{ marginRight: 6 }}></i>
@@ -254,7 +304,6 @@ function EnrollmentModal({ form, onClose }) {
                   </div>
                 </div>
               </div>
-
               <div className="modal-section">
                 <h4 className="modal-section-title">Employment</h4>
                 <div className="modal-grid-3">
@@ -329,7 +378,6 @@ function EnrollmentModal({ form, onClose }) {
                     </span>
                   </div>
                 </div>
-
                 {decl.signature && (
                   <div className="modal-field" style={{ marginTop: 16 }}>
                     <span className="field-label">Signature</span>
@@ -355,11 +403,12 @@ function EnrollmentForms() {
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedForm, setSelectedForm] = useState(null);
+  const [searchParams] = useSearchParams();
 
   const filtered = data.filter((row) => {
     const matchSearch =
       row.name.toLowerCase().includes(search.toLowerCase()) ||
-      row.email.toLowerCase().includes(search.toLowerCase());
+      (row.email || "").toLowerCase().includes(search.toLowerCase());
     const matchStatus =
       statusFilter === "All Status" || row.status === statusFilter;
     return matchSearch && matchStatus;
@@ -378,11 +427,11 @@ function EnrollmentForms() {
 
   const fetchForms = async () => {
     try {
-      const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/enrollment-form");
+      const res = await axios.get("http://localhost:8000/api/enrollment-form");
       const formatted = res.data.map((item) => ({
         id: item._id,
         date: new Date(item.createdAt).toLocaleDateString(),
-        name: `${item.personalDetails?.givenName || ""} ${item.personalDetails?.surname || ""}`,
+        name: `${item.personalDetails?.givenName || ""} ${item.personalDetails?.surname || ""}`.trim(),
         email: item.personalDetails?.email,
         phone: item.personalDetails?.mobilePhone,
         course: item.enrollment?.units?.join(", ") || "N/A",
@@ -392,7 +441,7 @@ function EnrollmentForms() {
         type: "Individual",
         status: item.status,
         enrollments: item.enrollment?.units?.length || 1,
-        raw: item, // ✅ full raw object for modal
+        raw: item,
       }));
       setData(formatted);
     } catch (err) {
@@ -403,6 +452,26 @@ function EnrollmentForms() {
   useEffect(() => {
     fetchForms();
   }, []);
+
+  // ✅ Auto-open modal from URL params (redirect from Students page)
+  useEffect(() => {
+    const email = searchParams.get("studentEmail");
+    const openModal = searchParams.get("openModal");
+    if (!email || !openModal || data.length === 0) return;
+    const record = data.find(
+      (r) => r.email?.toLowerCase() === email.toLowerCase()
+    );
+    if (record) setSelectedForm(record);
+  }, [data, searchParams]);
+
+  // ✅ Update status in UI after Approve/Reject
+  const handleStatusChange = (id, newStatus) => {
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item
+      )
+    );
+  };
 
   const handlePrint = (id) => {
     window.open(`/print.html?id=${id}`, "_blank");
@@ -517,13 +586,12 @@ function EnrollmentForms() {
                   </td>
                   <td>
                     <div className="action-buttons">
-                      {/* ✅ Eye button opens modal */}
                       <button
                         className="action-btn"
                         title="View"
                         onClick={() => setSelectedForm(row)}
                       >
-                        <i className="fa-regular fa-eye"></i> 
+                        <i className="fa-regular fa-eye"></i>
                       </button>
                       <button className="action-btn icon-btn" title="Document">
                         <i className="fa-regular fa-file"></i>
@@ -573,11 +641,12 @@ function EnrollmentForms() {
         </div>
       </div>
 
-      {/* ✅ Modal */}
+      {/* ✅ Modal with onStatusChange */}
       {selectedForm && (
         <EnrollmentModal
           form={selectedForm}
           onClose={() => setSelectedForm(null)}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>

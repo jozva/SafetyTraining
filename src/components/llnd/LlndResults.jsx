@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../../styles/LlndResults.css";
-
+import { useSearchParams } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
@@ -121,6 +121,7 @@ export default function LlndResults() {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [searchParams] = useSearchParams();
   const [stats, setStats] = useState({
     totalAssessments: 34,
     passed: 0,
@@ -131,7 +132,7 @@ export default function LlndResults() {
   });
 
   useEffect(() => {
-  fetch("https://safety-training-academy-tho8.onrender.com/api/flow/llnd-results")
+  fetch("http://localhost:8000/api/flow/llnd-results")
     .then(res => res.json())
     .then(res => {
       setData(res);
@@ -187,6 +188,18 @@ export default function LlndResults() {
     setPage(1);
 
   }, [search, statusFilter, data]);
+
+  useEffect(() => {
+  const studentId = searchParams.get("studentId");
+  const openModal = searchParams.get("openModal");
+
+  if (!studentId || !openModal || data.length === 0) return;
+
+  const record = data.find(r => r.id === studentId || String(r.id) === studentId);
+  if (record) {
+    setSelectedRecord(record);
+  }
+}, [data, searchParams]);
 
   const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
   const pageData = filteredData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

@@ -26,9 +26,9 @@ export default function StudentEnrollmentForm() {
         if (!studentId) throw new Error("Student ID not found. Please login again.");
 
         const [userRes, formRes, dashRes] = await Promise.all([
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/students/enrollment/${studentId}`),
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/enrollment-form?studentId=${studentId}`),
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/student/dashboard/${studentId}`)
+          fetch(`http://localhost:8000/api/students/enrollment/${studentId}`),
+          fetch(`http://localhost:8000/api/enrollment-form?studentId=${studentId}`),
+          fetch(`http://localhost:8000/api/student/dashboard/${studentId}`)
         ]);
 
         if (!userRes.ok) throw new Error("Failed to fetch user details");
@@ -74,7 +74,7 @@ export default function StudentEnrollmentForm() {
         return;
       }
 
-      const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/complete", {
+      const res = await fetch("http://localhost:8000/api/flow/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ flowId }),

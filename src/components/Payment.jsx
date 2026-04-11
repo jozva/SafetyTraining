@@ -73,12 +73,12 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
         else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Enter a valid email"
         if (!agreed) newErrors.agreed = "Please agree to the terms"
 
-        if (paymentMethod === "bank") {
+        if (paymentMethod === "Bank Transfer") {
             if (!isCompanyEnroll && !transactionId.trim()) newErrors.transactionId = "Transaction ID is required"
             if (!isCompanyEnroll && !paymentSlip) newErrors.paymentSlip = "Payment slip is required"
         }
 
-        if (paymentMethod === "card") {
+        if (paymentMethod === "Card Payment") {
             if (!isCompanyEnroll && !cardName.trim()) newErrors.cardName = "Name on card is required"
             if (!isCompanyEnroll && !cardNumber.trim()) newErrors.cardNumber = "Card number is required"
             if (!isCompanyEnroll && !expiryMonth) newErrors.expiryMonth = "Expiry month is required"
@@ -109,7 +109,6 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
     }
     useEffect(() => {
         const isValid = validate()
-        console.log("isValid:", isValid)
         if (setIsValid) setIsValid(isValid)
     }, [name, phone, email, agreed, transactionId, paymentSlip, cardName, cardNumber, expiryMonth, expiryYear, cvv, paymentMethod, triggerValidation])
 
@@ -198,7 +197,7 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                 <div className="summary-row total">
                     <span>Total:</span>
                     <span>
-                        ${selectedCourse?.sellingPrice || "0"}
+                        ${coursePrice || selectedCourse?.sellingPrice || "0"}
                     </span>
                 </div>
 
@@ -211,10 +210,10 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                     <label>Select Payment Method *</label>
 
                     <div
-                        className={`method-card ${paymentMethod === "bank" ? "active" : ""}`}
-                        onClick={() => setPaymentMethod("bank")}
+                        className={`method-card ${paymentMethod === "Bank Transfer" ? "active" : ""}`}
+                        onClick={() => setPaymentMethod("Bank Transfer")}
                     >
-                        <input type="radio" checked={paymentMethod === "bank"} readOnly />
+                        <input type="radio" checked={paymentMethod === "Bank Transfer"} readOnly />
                         <div>
                             <strong>Bank Transfer</strong>
                             <p>Transfer to our bank account - pay later</p>
@@ -222,10 +221,10 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                     </div>
 
                     <div
-                        className={`method-card ${paymentMethod === "card" ? "active" : ""}`}
-                        onClick={() => setPaymentMethod("card")}
+                        className={`method-card ${paymentMethod === "Card Payment" ? "active" : ""}`}
+                        onClick={() => setPaymentMethod("Card Payment")}
                     >
-                        <input type="radio" checked={paymentMethod === "card"} readOnly />
+                        <input type="radio" checked={paymentMethod === "Card Payment"} readOnly />
                         <div>
                             <strong>Credit Card - Pay Now</strong>
                             <p>Pay securely with your card online</p>
@@ -237,7 +236,7 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
 
 
             {/* Bank Details */}
-            {!isCompanyEnroll && paymentMethod === "bank" && (
+            {!isCompanyEnroll && paymentMethod === "Bank Transfer" && (
                 <div className="bank-details">
 
                     <h4>Bank Details</h4>
@@ -292,7 +291,7 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
 
             {/* Card Payment */}
 
-            {!isCompanyEnroll && paymentMethod === "card" && (
+            {!isCompanyEnroll && paymentMethod === "Card Payment" && (
 
                 <div className="card-payment">
 

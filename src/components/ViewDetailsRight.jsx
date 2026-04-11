@@ -1,26 +1,43 @@
 import "../styles/ViewDetailsRight.css"
+import { useNavigate } from "react-router-dom"
+
 function ViewDetailsRight({ course }) {
+
+    const navigate = useNavigate()
 
     return (
 
        <div className="view-details-right">
 
-            <div className="price-card">
+            {/* ✅ experienceBasedBooking ஆனா different price card */}
+            {course?.experienceBasedBooking ? (
+                <div className="price-card">
+                    <p className="course-fee">Course Fee</p>
+                    <div style={{ marginBottom: "8px" }}>
+                        <p style={{ fontSize: "13px", color: "#aaa", margin: 0 }}>With experience</p>
+                        <h1 className="new-price">${course?.withExperiencePrice}</h1>
+                    </div>
+                    <div>
+                        <p style={{ fontSize: "13px", color: "#aaa", margin: 0 }}>Without experience</p>
+                        <h1 className="new-price">${course?.withoutExperiencePrice}</h1>
+                    </div>
+                </div>
+            ) : (
+                <div className="price-card">
+                    <p className="old-price">${course?.originalPrice}</p>
+                    <h1 className="new-price">${course?.sellingPrice}</h1>
+                    <p className="course-fee">Course Fees</p>
+                    <p className="save-text">{`Save $${course.originalPrice - course.sellingPrice} !`}</p>
 
-                <p className="old-price">${course?.originalPrice}</p>
-                <h1 className="new-price">${course?.sellingPrice}</h1>
-                <p className="course-fee">Course Fees</p>
-                <p className="save-text">{`Save $${course.originalPrice - course.sellingPrice} !`}</p>
-
-                {course?.slblPrice && (
-                    <>
-                        <hr className="vdr-hr" />
-                        <p className="combo-label">SL + BL</p>
-                        <h3 className="combo-price">${course?.slblPrice}</h3>
-                    </>
-                )}
-
-            </div>
+                    {course?.slblPrice && (
+                        <>
+                            <hr className="vdr-hr" />
+                            <p className="combo-label">SL + BL</p>
+                            <h3 className="combo-price">${course?.slblPrice}</h3>
+                        </>
+                    )}
+                </div>
+            )}
 
             <div className="course-details-box">
 
@@ -42,14 +59,44 @@ function ViewDetailsRight({ course }) {
                     <strong>{course?.deliveryMethod}</strong>
                 </div>
 
-                <button className="book-btn-courses">
-                    BOOK NOW — ${course?.sellingPrice}
-                </button>
+                {course?.experienceBasedBooking ? (
+                    <div className="exp-buttons">
+                        <button
+                            className="book-btn-courses"
+                            onClick={() => navigate(`/book-now?courseId=${course?._id}&type=with-experience`)}
+                        >
+                            <span className="old-price">${course?.withExperienceOriginal}</span>
+                            <span> ${course?.withExperiencePrice || 0} </span>
+                            Book With Experience
+                        </button>
 
-                {course?.slblPrice && (
-                    <button className="book-btn-alt">
-                        Book Now SL + BL — ${course?.slblPrice}
-                    </button>
+                        <button
+                            className="book-btn-alt"
+                            onClick={() => navigate(`/book-now?courseId=${course?._id}&type=without-experience`)}
+                        >
+                            <span className="old-price">${course?.withoutExperienceOriginal}</span>
+                            <span> ${course?.withoutExperiencePrice} </span>
+                            Book Without Experience
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <button
+                            className="book-btn-courses"
+                            onClick={() => navigate(`/book-now?courseId=${course?._id}`)}
+                        >
+                            BOOK NOW — ${course?.sellingPrice}
+                        </button>
+
+                        {course?.slblPrice && (
+                            <button
+                                className="book-btn-alt"
+                                onClick={() => navigate(`/book-now?courseId=${course?._id}`)}
+                            >
+                                Book Now SL + BL — ${course?.slblPrice}
+                            </button>
+                        )}
+                    </>
                 )}
 
                 <hr className="vdr-hr" />

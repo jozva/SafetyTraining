@@ -29,7 +29,7 @@ function Courses() {
  
     const fetchCourses = async () => {
         try {
-            const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/courses");
+            const res = await axios.get("http://localhost:8000/api/courses");
             setCourses(res.data);
         } catch (error) {
             console.log(error);
@@ -55,7 +55,7 @@ function Courses() {
         const confirmDelete = window.confirm("Are you sure you want to delete this course?");
         if (!confirmDelete) return;
         try {
-            await axios.delete(`https://safety-training-academy-tho8.onrender.com/api/courses/${id}`);
+            await axios.delete(`http://localhost:8000/api/courses/${id}`);
             fetchCourses();
         } catch (err) {
             console.log(err);
@@ -155,8 +155,23 @@ function Courses() {
                                                 <span>•</span>
                                                 <p>{course.duration}</p>
                                                 <span>•</span>
-                                                <p className="original-price">${course.originalPrice}</p>
-                                                <p className="discount-price">${course.sellingPrice}</p>
+                                                {course.experienceBasedBooking ? (
+                                                    <>
+                                                        <p className="discount-price" style={{ color: "green" }}>
+                                                            ${course.withExperiencePrice}
+                                                            <span style={{ fontSize: "11px", color: "#888" }}>(w/ exp)</span>
+                                                        </p>
+                                                        <p className="discount-price" style={{ color: "red" }}>
+                                                            ${course.withoutExperiencePrice}
+                                                            <span style={{ fontSize: "11px", color: "#888" }}>(w/o exp)</span>
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className="original-price">${course.originalPrice}</p>
+                                                        <p className="discount-price">${course.sellingPrice}</p>
+                                                    </>
+                                                )}
                                             </div>
 
                                             <div className="course-bottom">

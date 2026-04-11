@@ -250,7 +250,7 @@ function LLNDAssessment({ onComplete, userDetails }) {
 
     return (
 
-        <div className="llnd-card">
+        <div className="llnd-card" style={{margin:"0% 10%"}}>
 
             <h3>Step 3 : LLND Assessment</h3>
 

@@ -1,29 +1,87 @@
 import { useEffect, useState } from "react";
 import "./CourseSelectionSuccess.css";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
+  
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  const data = enrollmentData || {
-    course: "CPCWHS1001 – Short Courses",
-    date: "Fri, 10 April 2026",
-    time: "16:01 – 16:02",
-    total: "$100",
-    paymentMethod: "Bank Transfer",
+  // ✅ enrollmentData இல்லாம இருந்தா redirect பண்ணு
+  if (!enrollmentData) {
+    return <div>Loading...</div>;
+  }
+
+  // ✅ Payment method display
+  const paymentMethodDisplay = enrollmentData.paymentMethod === "card" 
+    ? "Credit Card - Pay Now" 
+    : "Bank Transfer";
+
+  // ✅ Course display
+  const courseDisplay = enrollmentData.selectedCourse 
+    ? `${enrollmentData.selectedCourse.courseCode} – ${enrollmentData.selectedCourse.category}`
+    : "Course not selected";
+
+  // ✅ Date format பண்ணு
+  const formatDate = (dateString) => {
+    if (!dateString) return "Date not available";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
   };
 
   const summaryItems = [
-    { label: "Course", value: data.course },
-    { label: "Date", value: data.date },
-    { label: "Time", value: data.time },
-    { label: "Payment Method", value: data.paymentMethod },
+    { label: "Course", value: courseDisplay },
+    { label: "Date", value: formatDate(enrollmentData.courseDate) },
+    { label: "Time", value: enrollmentData.courseTime || "Time not available" },
+    { label: "Payment Method", value: paymentMethodDisplay },
   ];
+
+  const { setUser } = useContext(AuthContext); // 🔥 ADD THIS
+
+const handleGoToDashboard = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/api/auth/auto-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: enrollmentData.email,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+
+      // ✅ SAFE SAVE
+      if (data.user && typeof data.user === "object") {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user); // 🔥 IMPORTANT
+      } else {
+        console.error("Invalid user:", data.user);
+      }
+
+      navigate("/student");
+    } else {
+      alert("Login failed");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div className="enrollment-wrapper">
@@ -49,15 +107,15 @@ export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
         </div>
 
         {/* Title */}
-        <h2 className="enrollment-title">Enrollment Successful!</h2>
+        <h2 className="enrollment-title">Booking Successful!</h2>
         <p className="enrollment-subtitle">
-          You have successfully enrolled in your course. A confirmation email
+          You have successfully booked your course. A confirmation email
           has been sent to your registered email address.
         </p>
 
         {/* Summary Card */}
         <div className="summary-card">
-          <p className="summary-label">Enrollment Summary</p>
+          <p className="summary-label">Booking Summary</p>
 
           {summaryItems.map((item) => (
             <div key={item.label} className="summary-row">
@@ -69,21 +127,35 @@ export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
           {/* Total Row */}
           <div className="summary-total-row">
             <span className="summary-total-label">Total</span>
-            <span className="summary-total-value">{data.total}</span>
+            <span className="summary-total-value">
+              ${enrollmentData.coursePrice || "0"}
+            </span>
           </div>
         </div>
 
-        {/* Payment Notice */}
-        <div className="payment-notice">
-          <p>
-            Your payment is under review. We will confirm your booking once
-            the bank transfer is verified.
-          </p>
-        </div>
+        {/* Payment Notice - Bank Transfer */}
+        {enrollmentData.paymentMethod === "Bank Transfer" && (
+          <div className="payment-notice">
+            <p>
+              Your payment is under review. We will confirm your booking once
+              the bank transfer is verified.
+            </p>
+          </div>
+        )}
+
+        {/* Payment Notice - Card Payment */}
+        {enrollmentData.paymentMethod === "Card Payment" && (
+          <div className="payment-notice" style={{background: "#e8f5e9", borderColor: "#4caf50"}}>
+            <p>
+              Your payment has been processed successfully. 
+              A receipt has been sent to {enrollmentData.email}.
+            </p>
+          </div>
+        )}
 
         {/* Back to Home Button */}
-        <button className="back-btn-enrl-wrap" onClick={()=>{navigate("/")}}>
-          Back to Home
+        <button className="back-btn-enrl-wrap" onClick={handleGoToDashboard}>
+          Go to Dashboard
         </button>
 
       </div>

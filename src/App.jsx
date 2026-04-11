@@ -41,6 +41,7 @@ import StudentCertificate from "./components/student/StudentCertificate"
 import StudentEnrollmentForm from "./components/student/StudentEnrollmentForm"
 import StudentResults from "./components/student/StudentResults"
 import StudentSchedule from "./components/student/StudentSchedule"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
 
@@ -68,31 +69,58 @@ function App() {
                 <Route path="/all-courses" element={<AllCourses/>}/>
 
                 {/* STUDENT */}
-
-                <Route path="/student" element={<PortalLayout user={user} />}>
+                <Route
+                    path="/student"
+                    element={
+                        <ProtectedRoute allowedRoles={["Student"]}> {/* ✅ */}
+                            <PortalLayout user={user} />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<StudentDashboard />} />
-                     <Route path="/student/my-courses" element={<StudentMyCourses/>}/>
-                     <Route path="/student/schedule" element={<StudentSchedule/>}/>
-                     <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
-                     <Route path="/student/results" element={<StudentResults/>}/>
-                     <Route path="/student/certificates" element={<StudentCertificate/>}/>
+                    <Route path="/student/my-courses" element={<StudentMyCourses/>}/>
+                    <Route path="/student/schedule" element={<StudentSchedule/>}/>
+                    <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
+                    <Route path="/student/results" element={<StudentResults/>}/>
+                    <Route path="/student/certificates" element={<StudentCertificate/>}/>
                 </Route>
 
                 {/* TEACHER */}
-
-                <Route path="/teacher" element={<PortalLayout user={user} />}>
+                <Route
+                    path="/teacher"
+                    element={
+                        <ProtectedRoute allowedRoles={["Teacher"]}> {/* ✅ */}
+                            <PortalLayout user={user} />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<TeacherDashboard />} />
                 </Route>
 
-                <Route path="/company" element={<PortalLayout user={user} />}>
+                {/* COMPANY */}
+                <Route
+                    path="/company"
+                    element={
+                        <ProtectedRoute allowedRoles={["Company"]}> {/* ✅ */}
+                            <PortalLayout user={user} />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<CompanyDashboard />} />
                     <Route path="companyCourses" element={<CompanyCourses />} />
                     <Route path="companyStudents" element={<StudentsEnrolled />} />
                     <Route path="companyPayments" element={<CompanyPayments />} />
                 </Route>
-                {/* ADMIN */}
 
-                <Route path="/admin" element={<PortalLayout user={user} />}>
+                {/* ADMIN */}
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute allowedRoles={["Admin"]}> {/* ✅ */}
+                            <PortalLayout user={user} />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<AdminDashboard />} />
                     <Route path="students" element={<Students />} />
                     <Route path="schedule" element={<Schedule />} />
@@ -107,7 +135,6 @@ function App() {
                     <Route path="gallery" element={<Gallery />} />
                     <Route path="courses" element={<Courses />} />
                     <Route path="companies" element={<Companies />} />
-
                 </Route>
 
             </Routes>

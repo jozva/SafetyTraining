@@ -343,4 +343,12 @@
   .literacy-question {
     font-size: 18px;
   }
+  .literacy-image-box img{
+    width: 50%;
+    margin: auto
+  }
+  .language-passage img{
+    width: 50%;
+    
+  }
 }

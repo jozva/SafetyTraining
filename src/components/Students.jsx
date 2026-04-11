@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import "../styles/Student.css";
-
+import { useNavigate } from "react-router-dom";
 const ITEMS_PER_PAGE = 10;
-const API_BASE = "https://safety-training-academy-tho8.onrender.com/api";
+const API_BASE = "http://localhost:8000/api";
 
 // ─── Badge Components ───────────────────────────────────────────────────────
 
@@ -14,6 +14,15 @@ function StatusBadge({ status }) {
       {status}
     </span>
   );
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "—";
+  const date = new Date(dateStr);
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
 }
 
 function PaymentBadge({ status }) {
@@ -85,6 +94,18 @@ function ViewModal({ student, onClose }) {
           <div className="modal-detail-row">
             <span>Payment Status</span>
             <PaymentBadge status={student.paymentStatus} />
+          </div>
+          <div className="modal-detail-row">
+            <span>Payment Method</span>
+            <PaymentBadge status={student.paymentMethod} />
+          </div>
+          <div className="modal-detail-row">
+            <span>Transaction ID</span>
+            <PaymentBadge status={student.transactionId} />
+          </div>
+          <div className="modal-detail-row">
+            <span>Transaction URL</span>
+            <a href={student.slipUrl} target="_blank" rel="noopener noreferrer">View Transaction</a>
           </div>
         </div>
       </div>
@@ -377,6 +398,7 @@ export default function Students() {
   const [editStudent, setEditStudent] = useState(null);
   const [deleteStudent, setDeleteStudent] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const navigate = useNavigate();
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -478,6 +500,7 @@ const handleToggleStatus = async (student) => {
     setShowAddModal(false);
   };
 
+  
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="sm-page">
@@ -544,9 +567,10 @@ const handleToggleStatus = async (student) => {
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Course</th>
-                  <th>Course booking date</th>
+                  <th>Course schedule date</th>
                   <th>LLND Status</th>
                   <th>Enrollment Form</th>
+                  <th>Payment Method</th>
                   <th>Payment status</th>
                   <th>Status</th>
                   <th>Last Login</th>
@@ -583,7 +607,10 @@ const handleToggleStatus = async (student) => {
                       <td>{s.type}</td>
                       <td className="sm-email">{s.email}</td>
                       <td>{s.phone}</td>
-                      <td className="sm-course">{s.course}</td>
+                      <td className="sm-course">
+                        <div style={{ fontWeight: 500 }}>{s.courseTitle || "—"}</div>
+                        <div style={{ fontSize: "0.75rem", color: "#888" }}>{s.courseCategory || ""}</div>
+                      </td>
                       <td>{s.courseBookingDate}</td>
                       <td>
                         <div className="sm-status-cell">
@@ -591,7 +618,7 @@ const handleToggleStatus = async (student) => {
                           <button
                             className="sm-icon-btn"
                             title="View LLND"
-                            onClick={() => setViewStudent(s)}
+                            onClick={() => navigate(`/admin/llnd-results?studentId=${s.flowId}&openModal=true`)}
                           >
                             👁
                           </button>
@@ -602,12 +629,15 @@ const handleToggleStatus = async (student) => {
                           <StatusBadge status={s.enrollmentForm} />
                           <button
                             className="sm-icon-btn"
-                            title="View Enrollment"
-                            onClick={() => setViewStudent(s)}
+                            title="View Enrollment "
+                            onClick={() => navigate(`/admin/enrollment-forms?studentEmail=${s.email}&openModal=true`)}
                           >
                             👁
                           </button>
                         </div>
+                      </td>
+                       <td>
+                        <PaymentBadge status={s.paymentMethod} />
                       </td>
                       <td>
                         <PaymentBadge status={s.paymentStatus} />

@@ -1,13 +1,40 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Layout.css";
 import "../styles/Login.css";
 import AuthCard from "../components/AuthCard";
 import LoginForm from "../components/LoginForm";
 import { motion } from "framer-motion";
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { user, setUser } = useContext(AuthContext); // ✅ added setUser
+
+  // ✅ Restore user from localStorage (AUTO LOGIN FIX 🔥)
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (!user && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser); // 🔥 update context
+      } catch (err) {
+        console.error("Invalid user in localStorage");
+      }
+    }
+  }, [user, setUser]);
+
+  // ✅ Already logged in → redirect
+  useEffect(() => {
+    if (user) {
+      if (user.role === "Admin") navigate("/admin");
+      else if (user.role === "Student") navigate("/student");
+      else if (user.role === "Teacher") navigate("/teacher");
+      else if (user.role === "Company") navigate("/company");
+    }
+  }, [user, navigate]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

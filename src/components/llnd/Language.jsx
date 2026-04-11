@@ -121,7 +121,7 @@ function Language({ next }) {
               <source src={llndAudio} type="audio/mpeg" />
             </audio>
 
-            <img src={question.image} alt="family" />
+            <img src={question.image} alt="family" className="passage-img" />
 
           </div>
 

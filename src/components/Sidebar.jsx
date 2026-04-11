@@ -1,11 +1,14 @@
 import "../styles/Sidebar.css"
 import { useState } from "react"
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom"
 
 function Sidebar({ user }) {
   const [active, setActive] = useState("Dashboard")
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
+  
 
   const menu = {
     Student: [
@@ -54,11 +57,12 @@ function Sidebar({ user }) {
     setIsOpen(false)
   }
 
-  const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
 
-  navigate("/login");
+
+const { logout } = useContext(AuthContext);
+const handleLogout = () => {
+  logout(); 
+  navigate("/");
 };
 
   return (

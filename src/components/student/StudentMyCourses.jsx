@@ -33,8 +33,8 @@ export default function StudentMyCourses() {
       if (!studentId) throw new Error("Student ID not found. Please login again.");
 
       const [dashRes, coursesRes] = await Promise.all([
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/student/dashboard/${studentId}`),
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/courses`)
+        fetch(`http://localhost:8000/api/student/dashboard/${studentId}`),
+        fetch(`http://localhost:8000/api/courses`)
       ]);
 
       if (!dashRes.ok) throw new Error("Failed to fetch dashboard data");
@@ -48,7 +48,7 @@ export default function StudentMyCourses() {
 
       if (dash.enrolledCourses?.length > 0) {
         const courseDetailsPromises = dash.enrolledCourses.map(enrolled =>
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/courses/${enrolled.courseId}`)
+          fetch(`http://localhost:8000/api/courses/${enrolled.courseId}`)
             .then(res => res.ok ? res.json() : null)
             .then(courseData => ({
               ...enrolled,

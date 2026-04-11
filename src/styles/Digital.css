@@ -310,5 +310,8 @@
   .digital-container {
     padding: 30px;
   }
+    .digital-main {
+    width: 70%;
+  }
 
 }
