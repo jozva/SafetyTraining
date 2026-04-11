@@ -132,7 +132,7 @@ export default function LlndResults() {
   });
 
   useEffect(() => {
-  fetch("http://localhost:8000/api/flow/llnd-results")
+  fetch("https://safety-training-academy-tho8.onrender.com/api/flow/llnd-results")
     .then(res => res.json())
     .then(res => {
       setData(res);

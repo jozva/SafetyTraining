@@ -53,7 +53,7 @@ function BookNow() {
 
         setIsLoading(true);
 
-        fetch(`http://localhost:8000/api/book-now/check-role?id=${enrollId}`)
+        fetch(`https://safety-training-academy-tho8.onrender.com/api/book-now/check-role?id=${enrollId}`)
             .then(res => res.json())
             .then(data => {
 
@@ -110,7 +110,7 @@ function BookNow() {
             formData.append("transactionId", paymentData.transactionId || "");
             formData.append("slipUrl", slipUrl); // ✅
 
-            const res = await fetch("http://localhost:8000/api/flow/create", {
+            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/create", {
                 method: "POST",
                 body: formData,
             });
@@ -251,7 +251,7 @@ function BookNow() {
                                             formData.append("startTime", selectedSession?.startTime);
                                             formData.append("endTime", selectedSession?.endTime);
 
-                                            const res = await fetch("http://localhost:8000/api/enroll/enrollment", {
+                                            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enroll/enrollment", {
                                                 method: "POST",
                                                 body: formData,
                                             });

@@ -166,7 +166,7 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
     // ✅ API CALL
     const submitToBackend = async () => {
         try {
-            const res = await fetch("http://localhost:8000/api/enrollment-form", {
+            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enrollment-form", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

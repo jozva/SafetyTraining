@@ -35,7 +35,7 @@ function CourseSelection({
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/api/courses")
+                const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/courses")
                 const fetchedCourses = res.data
                 setCourses(fetchedCourses)
 
@@ -48,7 +48,7 @@ function CourseSelection({
                         setSelectedCourse(selected)
 
                         const slotRes = await axios.get(
-                            `http://localhost:8000/api/schedules/course/${courseId}`
+                            `https://safety-training-academy-tho8.onrender.com/api/schedules/course/${courseId}`
                         )
                         setSlots(slotRes.data)
                     }
@@ -75,7 +75,7 @@ function CourseSelection({
 
         try {
             const res = await axios.get(
-                `http://localhost:8000/api/schedules/course/${courseId}`
+                `https://safety-training-academy-tho8.onrender.com/api/schedules/course/${courseId}`
             )
             setSlots(res.data)
         } catch (err) {
