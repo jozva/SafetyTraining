@@ -71,6 +71,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
         sectionResults.push({
             name: "Numeracy",
             score: numPercent.toFixed(0),
+            correct: numCorrect,  // ✅ add
+            total: numTotal,
             status: numPercent >= 67 ? "Passed" : "Failed"
         })
 
@@ -102,6 +104,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
         sectionResults.push({
             name: "Language",
             score: langPercent.toFixed(0),
+            correct: langCorrect,  // ✅ add
+            total: langTotal,
             status: langPercent >= 67 ? "Passed" : "Failed"
         })
 
@@ -142,6 +146,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
         sectionResults.push({
             name: "Literacy",
             score: litPercent.toFixed(0),
+            correct: litCorrect,  // ✅ add
+            total: litTotal,
             status: litPercent >= 67 ? "Passed" : "Failed"
         })
 
@@ -190,6 +196,8 @@ function LLNDAssessment({ onComplete, userDetails }) {
         sectionResults.push({
             name: "Digital Literacy",
             score: digiPercent.toFixed(0),
+            correct: digiCorrect,  // ✅ add
+            total: digiTotal,
             status: digiPercent >= 67 ? "Passed" : "Failed"
         })
 
@@ -241,7 +249,7 @@ function LLNDAssessment({ onComplete, userDetails }) {
             email: userDetails?.email || "",
             phone: userDetails?.phone || "",
             date: new Date().toLocaleDateString(),
-            answers:answers
+            answers: answers
         }
 
         setResultData(result)
@@ -250,7 +258,7 @@ function LLNDAssessment({ onComplete, userDetails }) {
 
     return (
 
-        <div className="llnd-card" style={{margin:"0% 10%"}}>
+        <div className="llnd-card" style={{ margin: "0% 10%" }}>
 
             <h3>Step 3 : LLND Assessment</h3>
 

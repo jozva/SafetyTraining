@@ -61,7 +61,7 @@ function App() {
                 <Route path="/book-now" element={<BookNow />} />
                 <Route path="/course-result" element={<CourseResult />} />
                 <Route path="/llnd-assesment-complete" element={<LLNDAssessmentComplete/>}/>
-                <Route path="/enrollment-success" element={<EnrollmentComplete />} />
+                <Route path="/booking-success" element={<EnrollmentComplete />} />
                 <Route path="/voc" element={<VocMain/>}/>
                 <Route path="/contact" element={<Contact/>}/>
                 <Route path="/about" element={<About/>}/>

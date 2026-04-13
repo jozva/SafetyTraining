@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react"
 import "../../styles/EnrollmentSection5.css"
+import { useNavigate } from "react-router-dom"
 
 function EnrollmentSection5({ data, setData, prev, validateAndSubmit }) {
 
@@ -7,17 +8,45 @@ function EnrollmentSection5({ data, setData, prev, validateAndSubmit }) {
     const canvasRef = useRef(null)
     const [isDrawing, setIsDrawing] = useState(false)
     const [hasSignature, setHasSignature] = useState(false)
+    const [showToast, setShowToast] = useState(false)
+    const navigate = useNavigate()
 
-    // ── Canvas drawing ──
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const rect = canvas.getBoundingClientRect()
+        canvas.width = rect.width
+        canvas.height = rect.height
+    }, [])
+
+    useEffect(() => {
+        if (!data.signatureUrl) return
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext("2d")
+        const img = new Image()
+        img.crossOrigin = "anonymous" 
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+            setHasSignature(true)
+        }
+        img.src = data.signatureUrl
+    }, [data.signatureUrl])
+
     const getPos = (e, canvas) => {
         const rect = canvas.getBoundingClientRect()
+        const scaleX = canvas.width / rect.width
+        const scaleY = canvas.height / rect.height
         if (e.touches) {
             return {
-                x: e.touches[0].clientX - rect.left,
-                y: e.touches[0].clientY - rect.top
+                x: (e.touches[0].clientX - rect.left) * scaleX,
+                y: (e.touches[0].clientY - rect.top) * scaleY
             }
         }
-        return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        }
     }
 
     const startDraw = (e) => {
@@ -52,6 +81,7 @@ function EnrollmentSection5({ data, setData, prev, validateAndSubmit }) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         setHasSignature(false)
         set("signature", null)
+        set("signatureUrl", null)
     }
 
     const saveSignature = () => {
@@ -59,61 +89,56 @@ function EnrollmentSection5({ data, setData, prev, validateAndSubmit }) {
         set("signature", canvas.toDataURL())
     }
 
-    // Save signature on mouse up
     useEffect(() => {
         if (!isDrawing && hasSignature) {
             saveSignature()
         }
     }, [isDrawing])
 
-    // ── File upload helpers ──
     const handleFileClick = (inputId) => {
         document.getElementById(inputId).click()
     }
 
     const handleValidation = () => {
-    if (!data.acceptPrivacy) return "Please read and accept the Privacy Notice."
-    if (!data.acceptTerms) return "Please accept the Terms & Conditions."
-    if (!data.studentName?.trim()) return "Please enter your Student Name."
-    if (!data.declarationDate) return "Please enter the Date."
-    if (!hasSignature) return "Please provide your Online Signature."
-    if (!data.idDocument) return "Please upload your Identification document."
-    if (!data.photoDocument) return "Please upload a Photo."
-
-    return null // ✅ success
-}
-const handleSubmit = async () => {
-
-    const error = handleValidation()
-
-    if (error) {
-        alert(error)
-        return
+        if (!data.acceptPrivacy) return "Please read and accept the Privacy Notice."
+        if (!data.acceptTerms) return "Please accept the Terms & Conditions."
+        if (!data.studentName?.trim()) return "Please enter your Student Name."
+        if (!data.declarationDate) return "Please enter the Date."
+        if (!hasSignature) return "Please provide your Online Signature."
+        if (!data.idDocument && !data.idDocumentUrl) return "Please upload your Identification document."
+        return null
     }
 
-    await validateAndSubmit() // call parent API
-}
+    const handleSubmit = async () => {
+        const error = handleValidation()
+        if (error) {
+            alert(error)
+            return
+        }
+        const apiError = await validateAndSubmit()
+        if (apiError) {
+            alert(apiError)
+            return
+        }
+        setShowToast(true)
+    }
 
     return (
         <div className="s5-page">
 
-            {/* SECTION HEADER */}
             <div className="s5-section-header">
                 <h2 className="s5-section-header-text">
                     SECTION 5 — PRIVACY NOTICE, TERMS & ONLINE SIGNATURE
                 </h2>
             </div>
 
-            {/* WARNING BANNER */}
             <div className="s5-warning-banner">
                 <span className="s5-warning-icon">⚠️</span>
                 <span>Please read the Privacy Notice and Terms & Conditions. You must accept them before submitting.</span>
             </div>
 
-            {/* PRIVACY NOTICE */}
             <div className="s5-card">
                 <h4 className="s5-card-title">Privacy Notice</h4>
-
                 <div className="s5-policy-box">
                     <div className="s5-policy-item">
                         <h5>Why we collect your personal information</h5>
@@ -144,10 +169,8 @@ const handleSubmit = async () => {
                 </div>
             </div>
 
-            {/* TERMS & CONDITIONS */}
             <div className="s5-card">
                 <h4 className="s5-card-title">Terms & Conditions (Key Policies)</h4>
-
                 <div className="s5-policy-box">
                     <div className="s5-policy-item">
                         <h5>Complaints & Appeals</h5>
@@ -180,7 +203,6 @@ const handleSubmit = async () => {
                 </div>
             </div>
 
-            {/* ACCEPT CHECKBOXES */}
             <div className="s5-card">
                 <label className="s5-checkbox-label">
                     <input
@@ -202,7 +224,6 @@ const handleSubmit = async () => {
                 </label>
             </div>
 
-            {/* DECLARATION */}
             <div className="s5-card">
                 <h4 className="s5-card-title">Declaration</h4>
                 <ul className="s5-declaration-list">
@@ -210,7 +231,6 @@ const handleSubmit = async () => {
                     <li>I understand I must provide a USI to receive certification (where applicable).</li>
                     <li>I understand STA policies apply (training, assessment, complaints/appeals and privacy).</li>
                 </ul>
-
                 <div className="s5-row-2" style={{ marginTop: 16 }}>
                     <div className="s5-field">
                         <label className="s5-label">
@@ -236,12 +256,10 @@ const handleSubmit = async () => {
                 </div>
             </div>
 
-            {/* ONLINE SIGNATURE */}
             <div className="s5-card">
                 <label className="s5-label">
                     Online Signature <span className="s5-required">*</span>
                 </label>
-
                 <div className="s5-signature-wrapper">
                     <canvas
                         ref={canvasRef}
@@ -267,7 +285,6 @@ const handleSubmit = async () => {
                 </div>
             </div>
 
-            {/* PHOTO AND ID CARD */}
             <div className="s5-photo-header">
                 <h4 className="s5-photo-header-title">PHOTO AND ID CARD</h4>
                 <p className="s5-photo-header-text">
@@ -280,7 +297,6 @@ const handleSubmit = async () => {
 
             <div className="s5-upload-row">
 
-                {/* ID Document */}
                 <div className="s5-upload-card">
                     <div className="s5-upload-card-header">
                         <span className="s5-upload-icon">📄</span>
@@ -289,13 +305,15 @@ const handleSubmit = async () => {
                         </span>
                     </div>
                     <p className="s5-upload-hint">e.g. Passport / Driver Licence</p>
-
                     <div
-                        className={`s5-dropzone ${data.idDocument ? "s5-dropzone-active" : ""}`}
+                        className={`s5-dropzone ${(data.idDocument || data.idDocumentUrl) ? "s5-dropzone-active" : ""}`}
                         onClick={() => handleFileClick("s5-id-input")}
                     >
                         {data.idDocument ? (
                             <p className="s5-file-name">✅ {data.idDocument.name}</p>
+                        ) : data.idDocumentUrl ? (
+                            // ✅ already uploaded
+                            <p className="s5-file-name">✅ Already uploaded</p>
                         ) : (
                             <>
                                 <span className="s5-upload-arrow">↑</span>
@@ -313,22 +331,23 @@ const handleSubmit = async () => {
                     />
                 </div>
 
-                {/* Photo */}
                 <div className="s5-upload-card">
                     <div className="s5-upload-card-header">
                         <span className="s5-upload-icon">🖼️</span>
                         <span className="s5-upload-label">
-                            Upload a Photo <span className="s5-required">*</span>
+                            Upload a Photo
                         </span>
                     </div>
                     <p className="s5-upload-hint">Example: Upload a Photo.</p>
-
                     <div
-                        className={`s5-dropzone ${data.photoDocument ? "s5-dropzone-active" : ""}`}
+                        className={`s5-dropzone ${(data.photoDocument || data.photoDocumentUrl) ? "s5-dropzone-active" : ""}`}
                         onClick={() => handleFileClick("s5-photo-input")}
                     >
                         {data.photoDocument ? (
                             <p className="s5-file-name">✅ {data.photoDocument.name}</p>
+                        ) : data.photoDocumentUrl ? (
+                            // ✅ already uploaded
+                            <p className="s5-file-name">✅ Already uploaded</p>
                         ) : (
                             <>
                                 <span className="s5-upload-arrow">↑</span>
@@ -352,15 +371,98 @@ const handleSubmit = async () => {
                 Ensure documents are clear and readable. Accepted: PDF, JPG, PNG. Max 5MB per file.
             </p>
 
-            {/* FOOTER */}
-            {/* <div className="s5-footer">
-                <button className="s5-prev-btn" onClick={prev}>
-                    ← Previous
-                </button>
-                <button className="s5-submit-btn" onClick={handleSubmit}>
-                    Submit Enrollment
-                </button>
-            </div> */}
+            {/* ✅ PREVIEW — local file or saved Cloudinary URL */}
+            {(data.idDocument || data.photoDocument || data.signature ||
+              data.idDocumentUrl || data.photoDocumentUrl || data.signatureUrl) && (
+                <div className="s5-preview-section">
+                    <h4 className="s5-card-title">Preview</h4>
+                    <div className="s5-preview-row">
+
+                        {/* Signature — canvas draw இருந்தா data.signature, இல்லன்னா URL */}
+                        {(data.signature || data.signatureUrl) && (
+                            <div className="s5-preview-item">
+                                <p className="s5-preview-label">Online Signature</p>
+                                <img
+                                    src={data.signature || data.signatureUrl}
+                                    alt="signature"
+                                    className="s5-preview-signature"
+                                />
+                            </div>
+                        )}
+
+                        {/* ID Document */}
+                        {(data.idDocument || data.idDocumentUrl) && (
+                            <div className="s5-preview-item">
+                                <p className="s5-preview-label">ID Document</p>
+                                {data.idDocument ? (
+                                    data.idDocument.type === "application/pdf" ? (
+                                        <p className="s5-preview-pdf">📄 {data.idDocument.name}</p>
+                                    ) : (
+                                        <img
+                                            src={URL.createObjectURL(data.idDocument)}
+                                            alt="ID"
+                                            className="s5-preview-img"
+                                        />
+                                    )
+                                ) : data.idDocumentUrl?.endsWith(".pdf") ? (
+                                    <a href={data.idDocumentUrl} target="_blank" rel="noreferrer" className="s5-preview-pdf">
+                                        📄 View ID Document
+                                    </a>
+                                ) : (
+                                    <img
+                                        src={data.idDocumentUrl}
+                                        alt="ID"
+                                        className="s5-preview-img"
+                                    />
+                                )}
+                            </div>
+                        )}
+
+                        {/* Photo */}
+                        {(data.photoDocument || data.photoDocumentUrl) && (
+                            <div className="s5-preview-item">
+                                <p className="s5-preview-label">Photo</p>
+                                {data.photoDocument ? (
+                                    data.photoDocument.type === "application/pdf" ? (
+                                        <p className="s5-preview-pdf">📄 {data.photoDocument.name}</p>
+                                    ) : (
+                                        <img
+                                            src={URL.createObjectURL(data.photoDocument)}
+                                            alt="Photo"
+                                            className="s5-preview-img"
+                                        />
+                                    )
+                                ) : data.photoDocumentUrl?.endsWith(".pdf") ? (
+                                    <a href={data.photoDocumentUrl} target="_blank" rel="noreferrer" className="s5-preview-pdf">
+                                        📄 View Photo
+                                    </a>
+                                ) : (
+                                    <img
+                                        src={data.photoDocumentUrl}
+                                        alt="Photo"
+                                        className="s5-preview-img"
+                                    />
+                                )}
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            )}
+
+            {showToast && (
+                <div className="es5-toast">
+                    <p className="es5-toast-msg">
+                        ✅ Enrollment submitted successfully! Thank you.
+                    </p>
+                    <button
+                        className="es5-toast-btn"
+                        onClick={() => navigate("/student")}
+                    >
+                        Go to Dashboard
+                    </button>
+                </div>
+            )}
 
         </div>
     )

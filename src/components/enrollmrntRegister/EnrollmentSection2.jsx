@@ -1,41 +1,18 @@
-import { useState } from "react"
 import "../../styles/EnrollmentSection2.css"
 
-function EnrollmentSection2({ onNext, onPrev }) {
+function EnrollmentSection2({ data, setData, prev, next }) {
 
-    const [form, setForm] = useState({
-        usi: "",
-        permission: false,
-        staApplication: "",
-    })
-
-    const set = (key, value) => setForm(prev => ({ ...prev, [key]: value }))
-
-    const handleNext = () => {
-        if (!form.staApplication) {
-            alert("Please select USI application option.")
-            return
-        }
-
-        if (form.staApplication === "no" && !form.usi.trim()) {
-            alert("Please enter your USI.")
-            return
-        }
-
-        if (onNext) onNext(form)
-    }
+    const set = (key, value) => setData(p => ({ ...p, [key]: value }))
 
     return (
         <div className="usi-page">
 
-            {/* SECTION HEADER */}
             <div className="usi-section-header">
                 <h2 className="usi-section-header-text">
                     SECTION 2 — UNIQUE STUDENT IDENTIFIER (USI)
                 </h2>
             </div>
 
-            {/* INFO CARD */}
             <div className="usi-info-card">
                 <p className="usi-info-text">
                     From 1 January 2015, an RTO can be prevented from issuing nationally recognised VET
@@ -47,22 +24,19 @@ function EnrollmentSection2({ onNext, onPrev }) {
                 </p>
             </div>
 
-            {/* USI CARD */}
             <div className="usi-card">
 
                 <h3 className="usi-card-title">Unique Student Identifier (USI)</h3>
 
-                {/* INPUT + PERMISSION ROW */}
                 <div className="usi-input-row">
 
-                    {/* LEFT — USI Input */}
                     <div className="usi-input-col">
                         <label className="usi-label">Enter your USI</label>
                         <input
                             className="usi-input"
                             placeholder="10-character USI"
                             maxLength={10}
-                            value={form.usi}
+                            value={data.usi || ""}
                             onChange={e => set("usi", e.target.value.toUpperCase())}
                         />
                         <p className="usi-hint">
@@ -70,13 +44,12 @@ function EnrollmentSection2({ onNext, onPrev }) {
                         </p>
                     </div>
 
-                    {/* RIGHT — Permission Checkbox */}
                     <div className="usi-permission-col">
                         <input
                             type="checkbox"
                             className="usi-permission-checkbox"
-                            checked={form.permission}
-                            onChange={e => set("permission", e.target.checked)}
+                            checked={data.usiPermission || false}
+                            onChange={e => set("usiPermission", e.target.checked)}
                             id="usi-permission"
                         />
                         <label htmlFor="usi-permission" className="usi-permission-text">
@@ -87,7 +60,6 @@ function EnrollmentSection2({ onNext, onPrev }) {
 
                 </div>
 
-                {/* STA APPLICATION */}
                 <div className="usi-sta-group">
                     <p className="usi-sta-label">
                         USI application through STA (if you do not already have one)
@@ -99,7 +71,7 @@ function EnrollmentSection2({ onNext, onPrev }) {
                                 type="radio"
                                 name="usi-sta"
                                 value="no"
-                                checked={form.staApplication === "no"}
+                                checked={data.staApplication === "no"}
                                 onChange={() => set("staApplication", "no")}
                                 className="usi-radio"
                             />
@@ -110,7 +82,7 @@ function EnrollmentSection2({ onNext, onPrev }) {
                                 type="radio"
                                 name="usi-sta"
                                 value="yes"
-                                checked={form.staApplication === "yes"}
+                                checked={data.staApplication === "yes"}
                                 onChange={() => set("staApplication", "yes")}
                                 className="usi-radio"
                             />
@@ -120,62 +92,78 @@ function EnrollmentSection2({ onNext, onPrev }) {
                 </div>
 
             </div>
-            {form.staApplication === "yes" && (
-    <div className="usi-extra-box">
 
-        <h3 className="usi-extra-title">
-            USI application through STA (if you do not already have one)
-        </h3>
+            {data.staApplication === "yes" && (
+                <div className="usi-extra-box">
 
-        <p className="usi-extra-text">
-            If you would like STA to apply for a USI on your behalf, you must authorise us to do so and provide additional information.
-        </p>
+                    <h3 className="usi-extra-title">
+                        USI application through STA (if you do not already have one)
+                    </h3>
 
-        {/* NAME */}
-        <div className="usi-field">
-            <label>[Name] — authorises Safety Training Academy to apply your USI *</label>
-            <input className="usi-input" />
-        </div>
+                    <p className="usi-extra-text">
+                        If you would like STA to apply for a USI on your behalf, you must authorise us to do so and provide additional information.
+                    </p>
 
-        {/* CONSENT */}
-        <label className="usi-checkbox-row">
-            <input type="checkbox" />
-            I have read and I consent to the collection, use and disclosure of my personal information to create my USI.
-        </label>
+                    <div className="usi-field">
+                        <label>[Name] — authorises Safety Training Academy to apply your USI *</label>
+                        <input
+                            className="usi-input"
+                            value={data.staAuthoriseName || ""}
+                            onChange={e => set("staAuthoriseName", e.target.value)}
+                        />
+                    </div>
 
-        {/* CITY */}
-        <div className="usi-row">
-            <div>
-                <label>Town/City of Birth *</label>
-                <input className="usi-input" />
-            </div>
+                    <label className="usi-checkbox-row">
+                        <input
+                            type="checkbox"
+                            checked={data.staConsent || false}
+                            onChange={e => set("staConsent", e.target.checked)}
+                        />
+                        I have read and I consent to the collection, use and disclosure of my personal information to create my USI.
+                    </label>
 
-            <div>
-                <label>Overseas town or city where you were born *</label>
-                <input className="usi-input" />
-            </div>
-        </div>
+                    <div className="usi-row">
+                        <div>
+                            <label>Town/City of Birth *</label>
+                            <input
+                                className="usi-input"
+                                value={data.staTownOfBirth || ""}
+                                onChange={e => set("staTownOfBirth", e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label>Overseas town or city where you were born *</label>
+                            <input
+                                className="usi-input"
+                                value={data.staOverseasTown || ""}
+                                onChange={e => set("staOverseasTown", e.target.value)}
+                            />
+                        </div>
+                    </div>
 
-        {/* ID */}
-        <p className="usi-subtitle">
-            We will also need to verify your identity to create your USI.
-        </p>
+                    <p className="usi-subtitle">
+                        We will also need to verify your identity to create your USI.
+                    </p>
 
-        <div className="usi-row">
-            <select className="usi-input">
-                <option>Select...</option>
-                <option>Passport</option>
-                <option>Driving Licence</option>
-            </select>
+                    <div className="usi-row">
+                        <select
+                            className="usi-input"
+                            value={data.staIdType || ""}
+                            onChange={e => set("staIdType", e.target.value)}
+                        >
+                            <option value="">Select...</option>
+                            <option>Passport</option>
+                            <option>Driving Licence</option>
+                        </select>
+                        <input
+                            type="file"
+                            className="usi-input"
+                            onChange={e => set("staIdFile", e.target.files[0])}
+                        />
+                    </div>
 
-            <input type="file" className="usi-input" />
-        </div>
-
-    </div>
-)}
-
-            {/* FOOTER NAV */}
-
+                </div>
+            )}
 
         </div>
     )

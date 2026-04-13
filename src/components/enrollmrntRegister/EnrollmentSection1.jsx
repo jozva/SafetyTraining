@@ -1,52 +1,23 @@
-import { useState } from "react"
-import "../../styles/EnrollmentRegister.css"
 import { useEffect } from "react"
+import "../../styles/EnrollmentRegister.css"
 
 const STATES = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"]
 
-function EnrollmentSection1({ userDetails , onSubmit }) {
+function EnrollmentSection1({ userDetails, data, setData, next }) {
+    
+    const set = (key, value) => setData(p => ({ ...p, [key]: value }))
 
-    const [form, setForm] = useState({
-        title: "",
-        surname:  "",
-        givenName: "",
-        email:  "",
-        mobilePhone:  "",
-        middleName: "",
-        preferredName: "",
-        dob: "",
-        gender: "",
-        homePhone: "",
-        workPhone: "",
-        residentialAddress: "",
-        suburb: "",
-        state: "",
-        postcode: "",
-        postalDifferent: false,
-        postalAddress: "",
-        postalSuburb: "",
-        postalState: "",
-        postalPostcode: "",
-        emergencyName: "",
-        emergencyRelationship: "",
-        emergencyContact: "",
-        emergencyPermission: "no",
-    })
-useEffect(() => {
-    if (!userDetails || !userDetails.name) return
-
-    const parts = userDetails.name.trim().split(" ")
-
-    setForm(prev => ({
-        ...prev,
-        givenName: parts[0] || "",
-        surname: parts.slice(1).join(" ") || "",
-        email: userDetails.email || "",
-        mobilePhone: userDetails.phone || ""
-    }))
-}, [userDetails])
-
-    const set = (key, value) => setForm(prev => ({ ...prev, [key]: value }))
+    useEffect(() => {
+        if (!userDetails || !userDetails.name) return
+        const parts = userDetails.name.trim().split(" ")
+        setData(prev => ({
+            ...prev,
+            givenName: parts[0] || "",
+            surname: parts.slice(1).join(" ") || "",
+            email: userDetails.email || "",
+            mobilePhone: userDetails.phone || ""
+        }))
+    }, [userDetails])
 
     const handleSubmit = () => {
         const required = [
@@ -55,31 +26,26 @@ useEffect(() => {
             "suburb", "state", "postcode"
         ]
         for (const field of required) {
-            if (!form[field]) {
+            if (!data[field]) {
                 alert("Please fill in all required fields.")
                 return
             }
         }
-        if (onSubmit) onSubmit(form)
     }
 
     return (
         <div className="er-page">
 
-            {/* SECTION HEADER */}
             <div className="er-section-header">
                 <h2 className="er-section-header-text">SECTION 1 — APPLICANT INFORMATION</h2>
             </div>
 
-            {/* APPLICANT DETAILS */}
             <div className="er-card">
-
                 <h3 className="er-card-title">APPLICANT DETAILS</h3>
                 <p className="er-card-subtitle">
                     Please complete <strong>full name</strong> and <strong>date of birth</strong> as listed on your ID documents.
                 </p>
 
-                {/* TITLE */}
                 <div className="er-field-group">
                     <label className="er-label">
                         Title (please tick) <span className="er-required">*</span>
@@ -91,7 +57,7 @@ useEffect(() => {
                                     type="radio"
                                     name="er-title"
                                     value={t}
-                                    checked={form.title === t}
+                                    checked={data.title === t}
                                     onChange={() => set("title", t)}
                                     className="er-radio"
                                 />
@@ -101,7 +67,6 @@ useEffect(() => {
                     </div>
                 </div>
 
-                {/* SURNAME / GIVEN / MIDDLE */}
                 <div className="er-row-3">
                     <div className="er-field-group">
                         <label className="er-label">
@@ -109,7 +74,7 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.surname}
+                            value={data.surname || ""}
                             onChange={e => set("surname", e.target.value)}
                         />
                     </div>
@@ -119,7 +84,7 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.givenName}
+                            value={data.givenName || ""}
                             onChange={e => set("givenName", e.target.value)}
                         />
                     </div>
@@ -127,13 +92,12 @@ useEffect(() => {
                         <label className="er-label">Middle name</label>
                         <input
                             className="er-input"
-                            value={form.middleName}
+                            value={data.middleName || ""}
                             onChange={e => set("middleName", e.target.value)}
                         />
                     </div>
                 </div>
 
-                {/* PREFERRED / DOB / GENDER */}
                 <div className="er-row-3">
                     <div className="er-field-group">
                         <label className="er-label">
@@ -142,7 +106,7 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.preferredName}
+                            value={data.preferredName || ""}
                             onChange={e => set("preferredName", e.target.value)}
                         />
                     </div>
@@ -153,7 +117,7 @@ useEffect(() => {
                         <input
                             type="date"
                             className="er-input"
-                            value={form.dob}
+                            value={data.dob || ""}
                             onChange={e => set("dob", e.target.value)}
                         />
                     </div>
@@ -168,7 +132,7 @@ useEffect(() => {
                                         type="radio"
                                         name="er-gender"
                                         value={g}
-                                        checked={form.gender === g}
+                                        checked={data.gender === g}
                                         onChange={() => set("gender", g)}
                                         className="er-radio"
                                     />
@@ -179,14 +143,13 @@ useEffect(() => {
                     </div>
                 </div>
 
-                {/* HOME / WORK PHONE */}
                 <div className="er-row-2">
                     <div className="er-field-group">
                         <label className="er-label">Home Phone</label>
                         <input
                             className="er-input"
                             placeholder="(optional)"
-                            value={form.homePhone}
+                            value={data.homePhone || ""}
                             onChange={e => set("homePhone", e.target.value)}
                         />
                     </div>
@@ -195,13 +158,12 @@ useEffect(() => {
                         <input
                             className="er-input"
                             placeholder="(optional)"
-                            value={form.workPhone}
+                            value={data.workPhone || ""}
                             onChange={e => set("workPhone", e.target.value)}
                         />
                     </div>
                 </div>
 
-                {/* MOBILE / EMAIL */}
                 <div className="er-row-2">
                     <div className="er-field-group">
                         <label className="er-label">
@@ -209,7 +171,7 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.mobilePhone}
+                            value={data.mobilePhone || ""}
                             onChange={e => set("mobilePhone", e.target.value)}
                         />
                     </div>
@@ -220,25 +182,23 @@ useEffect(() => {
                         <input
                             type="email"
                             className="er-input"
-                            value={form.email}
+                            value={data.email || ""}
                             onChange={e => set("email", e.target.value)}
                         />
                     </div>
                 </div>
 
-                {/* RESIDENTIAL ADDRESS */}
                 <div className="er-field-group-full">
                     <label className="er-label">
                         Residential Address <span className="er-required">*</span>
                     </label>
                     <input
                         className="er-input-full"
-                        value={form.residentialAddress}
+                        value={data.residentialAddress || ""}
                         onChange={e => set("residentialAddress", e.target.value)}
                     />
                 </div>
 
-                {/* SUBURB / STATE / POSTCODE */}
                 <div className="er-row-3">
                     <div className="er-field-group">
                         <label className="er-label">
@@ -246,7 +206,7 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.suburb}
+                            value={data.suburb || ""}
                             onChange={e => set("suburb", e.target.value)}
                         />
                     </div>
@@ -256,7 +216,7 @@ useEffect(() => {
                         </label>
                         <select
                             className="er-select"
-                            value={form.state}
+                            value={data.state || ""}
                             onChange={e => set("state", e.target.value)}
                         >
                             <option value="">Select...</option>
@@ -269,30 +229,28 @@ useEffect(() => {
                         </label>
                         <input
                             className="er-input"
-                            value={form.postcode}
+                            value={data.postcode || ""}
                             onChange={e => set("postcode", e.target.value)}
                         />
                     </div>
                 </div>
 
-                {/* POSTAL DIFFERENT CHECKBOX */}
                 <label className="er-checkbox-label">
                     <input
                         type="checkbox"
-                        checked={form.postalDifferent}
+                        checked={data.postalDifferent || false}
                         onChange={e => set("postalDifferent", e.target.checked)}
                     />
                     Postal Address is different from Residential Address
                 </label>
 
-                {/* POSTAL ADDRESS BLOCK */}
-                {form.postalDifferent && (
+                {data.postalDifferent && (
                     <div className="er-postal-block">
                         <div className="er-field-group-full">
                             <label className="er-label">Postal Address</label>
                             <input
                                 className="er-input-full"
-                                value={form.postalAddress}
+                                value={data.postalAddress || ""}
                                 onChange={e => set("postalAddress", e.target.value)}
                             />
                         </div>
@@ -301,7 +259,7 @@ useEffect(() => {
                                 <label className="er-label">Suburb</label>
                                 <input
                                     className="er-input"
-                                    value={form.postalSuburb}
+                                    value={data.postalSuburb || ""}
                                     onChange={e => set("postalSuburb", e.target.value)}
                                 />
                             </div>
@@ -309,7 +267,7 @@ useEffect(() => {
                                 <label className="er-label">State</label>
                                 <select
                                     className="er-select"
-                                    value={form.postalState}
+                                    value={data.postalState || ""}
                                     onChange={e => set("postalState", e.target.value)}
                                 >
                                     <option value="">Select...</option>
@@ -320,7 +278,7 @@ useEffect(() => {
                                 <label className="er-label">Postcode</label>
                                 <input
                                     className="er-input"
-                                    value={form.postalPostcode}
+                                    value={data.postalPostcode || ""}
                                     onChange={e => set("postalPostcode", e.target.value)}
                                 />
                             </div>
@@ -329,9 +287,7 @@ useEffect(() => {
                 )}
             </div>
 
-            {/* EMERGENCY CONTACT */}
             <div className="er-card">
-
                 <h3 className="er-card-title">EMERGENCY CONTACT</h3>
 
                 <div className="er-row-3">
@@ -339,7 +295,7 @@ useEffect(() => {
                         <label className="er-label">Full Name</label>
                         <input
                             className="er-input"
-                            value={form.emergencyName}
+                            value={data.emergencyName || ""}
                             onChange={e => set("emergencyName", e.target.value)}
                         />
                     </div>
@@ -347,7 +303,7 @@ useEffect(() => {
                         <label className="er-label">Relationship</label>
                         <input
                             className="er-input"
-                            value={form.emergencyRelationship}
+                            value={data.emergencyRelationship || ""}
                             onChange={e => set("emergencyRelationship", e.target.value)}
                         />
                     </div>
@@ -355,7 +311,7 @@ useEffect(() => {
                         <label className="er-label">Contact Number</label>
                         <input
                             className="er-input"
-                            value={form.emergencyContact}
+                            value={data.emergencyContact || ""}
                             onChange={e => set("emergencyContact", e.target.value)}
                         />
                     </div>
@@ -379,7 +335,7 @@ useEffect(() => {
                                     type="radio"
                                     name="er-emergency-permission"
                                     value={val}
-                                    checked={form.emergencyPermission === val}
+                                    checked={data.emergencyPermission === val}
                                     onChange={() => set("emergencyPermission", val)}
                                     className="er-radio"
                                 />
@@ -388,11 +344,7 @@ useEffect(() => {
                         ))}
                     </div>
                 </div>
-
             </div>
-
-            {/* SUBMIT */}
-           
 
         </div>
     )

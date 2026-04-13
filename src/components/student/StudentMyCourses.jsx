@@ -181,9 +181,9 @@ export default function StudentMyCourses() {
                 <div className="mc-course-card__top">
                   <div>
                     <h3 className="mc-course-card__title">{course.courseName}</h3>
-                    {course.enrolledDate && (
+                    {/* {course.enrolledDate && (
                       <p className="mc-course-card__date">Enrolled: {course.enrolledDate}</p>
-                    )}
+                    )} */}
                   </div>
                   <div className="mc-course-card__badges">
                     <span className="mc-badge status-active">Active</span>

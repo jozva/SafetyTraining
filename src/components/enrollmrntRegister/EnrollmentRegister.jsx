@@ -5,11 +5,11 @@ import EnrollmentSection3 from "./EnrollmentSection3"
 import EnrollmentSection4 from "./EnrollmentSection4"
 import EnrollmentSection5 from "./EnrollmentSection5"
 
-const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, setSection }, ref) => {
+const EnrollmentRegister = forwardRef(({ userDetails, savedFormData, section, setSection }, ref) => {
 
 
 
-   
+
     const [formData, setFormData] = useState({
         flowId: localStorage.getItem("flowId"),
         userId: localStorage.getItem("enrollId"),
@@ -85,6 +85,125 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
         photoDocument: null
     })
 
+    const saveSectionToBackend = async (sectionNumber) => {
+        const studentId = formData.userId
+        if (!studentId) return
+
+        let payload = {}
+
+        if (sectionNumber === 1) {
+            payload = {
+                studentId,
+                section: 1,
+                personalDetails: {
+                    title: formData.title,
+                    surname: formData.surname,
+                    givenName: formData.givenName,
+                    middleName: formData.middleName,
+                    preferredName: formData.preferredName,
+                    dob: formData.dob,
+                    gender: formData.gender,
+                    email: formData.email,
+                    homePhone: formData.homePhone,
+                    workPhone: formData.workPhone,
+                    mobilePhone: formData.mobilePhone,
+                },
+                address: {
+                    residential: {
+                        address: formData.residentialAddress,
+                        suburb: formData.suburb,
+                        state: formData.state,
+                        postcode: formData.postcode,
+                    },
+                    postal: {
+                        address: formData.postalAddress,
+                        suburb: formData.postalSuburb,
+                        state: formData.postalState,
+                        postcode: formData.postalPostcode,
+                    }
+                },
+                emergencyContact: {
+                    name: formData.emergencyName,
+                    relationship: formData.emergencyRelationship,
+                    contactNumber: formData.emergencyContact,
+                    consent: formData.emergencyPermission === "yes"
+                }
+            }
+        }
+
+        if (sectionNumber === 2) {
+            payload = {
+                studentId,
+                section: 2,
+                usi: formData.usi,
+                usiPermission: formData.usiPermission,
+                staApplication: formData.staApplication,
+            }
+        }
+
+        if (sectionNumber === 3) {
+            payload = {
+                studentId,
+                section: 3,
+                education: {
+                    highestLevel: formData.educationLevel,
+                    yearCompleted: formData.yearCompleted,
+                    schoolName: formData.schoolName,
+                    schoolState: formData.schoolState,
+                    schoolPostcode: formData.schoolPostcode,
+                    schoolCountry: formData.schoolCountry,
+                },
+                qualifications: {
+                    hasQualification: formData.hasQualifications === "yes",
+                    types: formData.qualificationLevels
+                },
+                employment: {
+                    status: formData.employmentStatus,
+                    details: {
+                        employerName: formData.employerName,
+                        supervisorName: formData.supervisorName,
+                        address: formData.workplaceAddress,
+                        email: formData.employerEmail,
+                        phone: formData.employerPhone
+                    }
+                },
+                trainingReason: formData.trainingReason,
+            }
+        }
+
+        if (sectionNumber === 4) {
+            payload = {
+                studentId,
+                section: 4,
+                language: {
+                    countryOfBirth: formData.countryOfBirth,
+                    otherLanguage: formData.otherLanguage,    
+                            speaksOtherLanguage: formData.speaksOtherLanguage, // ✅ add
+            indigenousStatus: formData.indigenousStatus, 
+                },
+                specialNeeds: {
+                    hasDisability: formData.hasDisability === "yes",
+                    types: formData.disabilityTypes,
+                    other: formData.disabilityNotes
+                }
+            }
+        }
+
+        console.log(`=== Section ${sectionNumber} saving ===`, payload) // ✅ check
+
+        try {
+            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enrollment-form/section", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            const data = await res.json()
+            console.log(`Section ${sectionNumber} saved:`, data)
+        } catch (err) {
+            console.error(`Section ${sectionNumber} save error:`, err)
+        }
+    }
+
     // Autofill user details
     useEffect(() => {
         if (!userDetails) return
@@ -102,54 +221,68 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
 
 
     useEffect(() => {
-    if (!savedFormData) return;
+        if (!savedFormData) return;
 
-    setFormData(prev => ({
-      ...prev,
-      title: savedFormData.personalDetails?.title || prev.title,
-      surname: savedFormData.personalDetails?.surname || prev.surname,
-      givenName: savedFormData.personalDetails?.givenName || prev.givenName,
-      middleName: savedFormData.personalDetails?.middleName || prev.middleName,
-      preferredName: savedFormData.personalDetails?.preferredName || prev.preferredName,
-      dob: savedFormData.personalDetails?.dob || prev.dob,
-      gender: savedFormData.personalDetails?.gender || prev.gender,
-      email: savedFormData.personalDetails?.email || prev.email,
-      homePhone: savedFormData.personalDetails?.homePhone || prev.homePhone,
-      mobilePhone: savedFormData.personalDetails?.mobilePhone || prev.mobilePhone,
-      residentialAddress: savedFormData.address?.residential?.address || prev.residentialAddress,
-      suburb: savedFormData.address?.residential?.suburb || prev.suburb,
-      state: savedFormData.address?.residential?.state || prev.state,
-      postcode: savedFormData.address?.residential?.postcode || prev.postcode,
-      postalAddress: savedFormData.address?.postal?.address || prev.postalAddress,
-      postalSuburb: savedFormData.address?.postal?.suburb || prev.postalSuburb,
-      postalState: savedFormData.address?.postal?.state || prev.postalState,
-      postalPostcode: savedFormData.address?.postal?.postcode || prev.postalPostcode,
-      emergencyName: savedFormData.emergencyContact?.name || prev.emergencyName,
-      emergencyRelationship: savedFormData.emergencyContact?.relationship || prev.emergencyRelationship,
-      emergencyContact: savedFormData.emergencyContact?.contactNumber || prev.emergencyContact,
-      emergencyPermission: savedFormData.emergencyContact?.consent ? "yes" : "no",
-      educationLevel: savedFormData.education?.highestLevel || prev.educationLevel,
-      yearCompleted: savedFormData.education?.yearCompleted || prev.yearCompleted,
-      schoolName: savedFormData.education?.schoolName || prev.schoolName,
-      schoolState: savedFormData.education?.schoolState || prev.schoolState,
-      schoolPostcode: savedFormData.education?.schoolPostcode || prev.schoolPostcode,
-      schoolCountry: savedFormData.education?.schoolCountry || prev.schoolCountry,
-      hasQualifications: savedFormData.qualifications?.hasQualification ? "yes" : "no",
-      qualificationLevels: savedFormData.qualifications?.types || prev.qualificationLevels,
-      employmentStatus: savedFormData.employment?.status || prev.employmentStatus,
-      employerName: savedFormData.employment?.details?.employerName || prev.employerName,
-      supervisorName: savedFormData.employment?.details?.supervisorName || prev.supervisorName,
-      workplaceAddress: savedFormData.employment?.details?.address || prev.workplaceAddress,
-      employerEmail: savedFormData.employment?.details?.email || prev.employerEmail,
-      employerPhone: savedFormData.employment?.details?.phone || prev.employerPhone,
-      trainingReason: savedFormData.trainingReason || prev.trainingReason,
-      countryOfBirth: savedFormData.language?.countryOfBirth || prev.countryOfBirth,
-      otherLanguage: savedFormData.language?.otherLanguage || prev.otherLanguage,
-      hasDisability: savedFormData.specialNeeds?.hasDisability ? "yes" : "no",
-      disabilityTypes: savedFormData.specialNeeds?.types || prev.disabilityTypes,
-      disabilityNotes: savedFormData.specialNeeds?.other || prev.disabilityNotes,
-    }));
-  }, [savedFormData]);
+        setFormData(prev => ({
+            ...prev,
+            title: savedFormData.personalDetails?.title || prev.title,
+            surname: savedFormData.personalDetails?.surname || prev.surname,
+            givenName: savedFormData.personalDetails?.givenName || prev.givenName,
+            middleName: savedFormData.personalDetails?.middleName || prev.middleName,
+            preferredName: savedFormData.personalDetails?.preferredName || prev.preferredName,
+            dob: savedFormData.personalDetails?.dob || prev.dob,
+            gender: savedFormData.personalDetails?.gender || prev.gender,
+            email: savedFormData.personalDetails?.email || prev.email,
+            homePhone: savedFormData.personalDetails?.homePhone || prev.homePhone,
+            mobilePhone: savedFormData.personalDetails?.mobilePhone || prev.mobilePhone,
+            residentialAddress: savedFormData.address?.residential?.address || prev.residentialAddress,
+            suburb: savedFormData.address?.residential?.suburb || prev.suburb,
+            state: savedFormData.address?.residential?.state || prev.state,
+            postcode: savedFormData.address?.residential?.postcode || prev.postcode,
+            postalAddress: savedFormData.address?.postal?.address || prev.postalAddress,
+            postalSuburb: savedFormData.address?.postal?.suburb || prev.postalSuburb,
+            postalState: savedFormData.address?.postal?.state || prev.postalState,
+            postalPostcode: savedFormData.address?.postal?.postcode || prev.postalPostcode,
+            emergencyName: savedFormData.emergencyContact?.name || prev.emergencyName,
+            emergencyRelationship: savedFormData.emergencyContact?.relationship || prev.emergencyRelationship,
+            emergencyContact: savedFormData.emergencyContact?.contactNumber || prev.emergencyContact,
+            emergencyPermission: savedFormData.emergencyContact?.consent ? "yes" : "no",
+            educationLevel: savedFormData.education?.highestLevel || prev.educationLevel,
+            yearCompleted: savedFormData.education?.yearCompleted || prev.yearCompleted,
+            schoolName: savedFormData.education?.schoolName || prev.schoolName,
+            schoolState: savedFormData.education?.schoolState || prev.schoolState,
+            schoolPostcode: savedFormData.education?.schoolPostcode || prev.schoolPostcode,
+            schoolCountry: savedFormData.education?.schoolCountry || prev.schoolCountry,
+            hasQualifications: savedFormData.qualifications?.hasQualification ? "yes" : "no",
+            qualificationLevels: savedFormData.qualifications?.types || prev.qualificationLevels,
+            employmentStatus: savedFormData.employment?.status || prev.employmentStatus,
+            employerName: savedFormData.employment?.details?.employerName || prev.employerName,
+            supervisorName: savedFormData.employment?.details?.supervisorName || prev.supervisorName,
+            workplaceAddress: savedFormData.employment?.details?.address || prev.workplaceAddress,
+            employerEmail: savedFormData.employment?.details?.email || prev.employerEmail,
+            employerPhone: savedFormData.employment?.details?.phone || prev.employerPhone,
+            trainingReason: savedFormData.trainingReason || prev.trainingReason,
+            countryOfBirth: savedFormData.language?.countryOfBirth || prev.countryOfBirth,
+            otherLanguage: savedFormData.language?.otherLanguage || prev.otherLanguage,
+            hasDisability: savedFormData.specialNeeds?.hasDisability ? "yes" : "no",
+            disabilityTypes: savedFormData.specialNeeds?.types || prev.disabilityTypes,
+            disabilityNotes: savedFormData.specialNeeds?.other || prev.disabilityNotes,
+            usi: savedFormData.usi?.number || prev.usi,
+            usiPermission: savedFormData.usi?.permission || prev.usiPermission,
+staApplication: savedFormData.usi?.staApplication ?? prev.staApplication ?? "no",
+speaksOtherLanguage: savedFormData.language?.speaksOtherLanguage ?? prev.speaksOtherLanguage ?? "",
+indigenousStatus: savedFormData.language?.indigenousStatus ?? prev.indigenousStatus ?? "",
+            staAuthoriseName: savedFormData.staAuthoriseName || prev.staAuthoriseName,
+            staConsent: savedFormData.staConsent || prev.staConsent,
+            staTownOfBirth: savedFormData.staTownOfBirth || prev.staTownOfBirth,
+            staOverseasTown: savedFormData.staOverseasTown || prev.staOverseasTown,
+            staIdType: savedFormData.staIdType || prev.staIdType,
+            // savedFormData useEffect-ல் கடைசியில் add பண்ணுங்க
+signatureUrl: savedFormData.signatureUrl ?? prev.signatureUrl ?? null,
+idDocumentUrl: savedFormData.idDocumentUrl ?? prev.idDocumentUrl ?? null,
+photoDocumentUrl: savedFormData.photoDocumentUrl ?? prev.photoDocumentUrl ?? null,
+        }));
+    }, [savedFormData]);
 
     // ✅ VALIDATION FUNCTION
     const validateForm = () => {
@@ -157,27 +290,59 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
         if (!formData.acceptTerms) return "Accept Terms"
         if (!formData.studentName) return "Enter Student Name"
         if (!formData.declarationDate) return "Enter Date"
-        if (!formData.signature) return "Signature required"
-        if (!formData.idDocument) return "Upload ID"
-        if (!formData.photoDocument) return "Upload Photo"
+        if (!formData.signature && !formData.signatureUrl) return "Signature required"
+        if (!formData.idDocument && !formData.idDocumentUrl) return "Upload ID"
         return null
     }
 
     // ✅ API CALL
+    // ✅ base64 → blob helper
+    const dataURLtoBlob = (dataUrl) => {
+        const arr = dataUrl.split(",")
+        const mime = arr[0].match(/:(.*?);/)[1]
+        const bstr = atob(arr[1])
+        let n = bstr.length
+        const u8arr = new Uint8Array(n)
+        while (n--) u8arr[n] = bstr.charCodeAt(n)
+        return new Blob([u8arr], { type: mime })
+    }
+
     const submitToBackend = async () => {
         try {
+            const fd = new FormData()
+
+            Object.entries(formData).forEach(([key, value]) => {
+                if (value === null || value === undefined) return
+
+                if (key === "signature" && typeof value === "string" && value.startsWith("data:image")) {
+                    // ✅ signature base64 → blob → file
+                    const blob = dataURLtoBlob(value)
+                    fd.append("signature", blob, "signature.png")
+                } else if (value instanceof File) {
+                    // ✅ idDocument, photoDocument
+                    fd.append(key, value)
+                } else if (Array.isArray(value)) {
+                    fd.append(key, JSON.stringify(value))
+                } else if (typeof value === "boolean") {
+                    fd.append(key, value.toString())
+                } else {
+                    fd.append(key, value)
+                }
+            })
+            console.log("=== FormData contents ===")
+            for (let [key, value] of fd.entries()) {
+                console.log(key, ":", value)
+            }
+
             const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enrollment-form", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
+                body: fd // ✅ Content-Type header வேண்டாம்
             })
+
             const data = await res.json()
-
             if (!res.ok) throw new Error(data.message)
-
             return null
+
         } catch (err) {
             return err.message || "Something went wrong"
         }
@@ -194,6 +359,10 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
             if (apiError) return apiError
 
             return null
+        }, getFormData: () => formData,
+        // ✅ section save expose பண்றோம்
+        saveSection: async (sectionNumber) => {
+            await saveSectionToBackend(sectionNumber)
         }
     }))
 
@@ -205,7 +374,10 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
                     userDetails={userDetails}
                     data={formData}
                     setData={setFormData}
-                    next={() => setSection(2)}
+                    next={async () => {
+                        await saveSectionToBackend(1) // ✅
+                        setSection(2)
+                    }}
                 />
             )}
 
@@ -214,7 +386,10 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
                     data={formData}
                     setData={setFormData}
                     prev={() => setSection(1)}
-                    next={() => setSection(3)}
+                    next={async () => {
+                        await saveSectionToBackend(2) // ✅
+                        setSection(3)
+                    }}
                 />
             )}
 
@@ -223,7 +398,10 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
                     data={formData}
                     setData={setFormData}
                     prev={() => setSection(2)}
-                    next={() => setSection(4)}
+                    next={async () => {
+                        await saveSectionToBackend(3) // ✅
+                        setSection(4)
+                    }}
                 />
             )}
 
@@ -232,7 +410,10 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
                     data={formData}
                     setData={setFormData}
                     prev={() => setSection(3)}
-                    next={() => setSection(5)}
+                    next={async () => {
+                        await saveSectionToBackend(4) // ✅
+                        setSection(5)
+                    }}
                 />
             )}
 
@@ -241,6 +422,13 @@ const EnrollmentRegister = forwardRef(({userDetails, savedFormData, section, set
                     data={formData}
                     setData={setFormData}
                     prev={() => setSection(4)}
+                    validateAndSubmit={async () => {  // ✅ add
+                        const error = validateForm()
+                        if (error) return error
+                        const apiError = await submitToBackend()
+                        if (apiError) return apiError
+                        return null
+                    }}
 
                 />
             )}

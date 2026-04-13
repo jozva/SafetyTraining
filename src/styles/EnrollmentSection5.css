@@ -380,6 +380,93 @@
     background: #6d28d9;
 }
 
+.es5-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    text-align: center;
+    min-width: 320px;
+}
+
+.es5-toast-msg {
+    margin: 0 0 12px;
+    font-size: 16px;
+}
+
+.es5-toast-btn {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.es5-toast-btn:hover {
+    background: #6d28d9;
+}
+
+.s5-preview-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.s5-preview-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.s5-preview-item {
+    flex: 1;
+    min-width: 200px;
+}
+
+.s5-preview-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.s5-preview-signature {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    max-height: 120px;
+    object-fit: contain;
+}
+
+.s5-preview-img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    max-height: 150px;
+}
+
+.s5-preview-pdf {
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #374151;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .s5-row-2,

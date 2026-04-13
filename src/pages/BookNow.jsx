@@ -6,8 +6,10 @@ import LLNDAssessment from "../components/llnd/LLNDAssessment";
 import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegister";
 import CourseSelectionSuccess from "../components/course/CourseSelectionSuccess";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
+import {  useLocation } from "react-router-dom"
 
 function BookNow() {
+    const { state } = useLocation()
     const navigate = useNavigate();
     const enrollRef = useRef(null);
     const { id: enrollId } = useParams();
@@ -24,6 +26,8 @@ function BookNow() {
     const [isPaymentValid, setIsPaymentValid] = useState(false);
     const [triggerValidation, setTriggerValidation] = useState(false);
     const [paymentData, setPaymentData] = useState({});
+
+    const email = state?.email || "your email"
 
     // ✅ coursePrice calculate
     const coursePrice = selectedCourse
@@ -91,7 +95,7 @@ function BookNow() {
 
     if (isLoading) return <div>Loading...</div>;
 
-    const createFlow = async (slipUrl = "") => { // ✅ slipUrl parameter
+    const createFlow = async (slipUrl = "") => { 
         try {
             const studentId = localStorage.getItem("enrollId");
             if (!studentId) return;
@@ -125,8 +129,12 @@ function BookNow() {
     return (
         <section className="enroll-page">
 
-            <h1 className="title">Student Enrollment</h1>
-            <p className="subtitle">Complete all steps to enroll in your course</p>
+            {step !== 3 && (
+                <>
+                    <h1 className="title">Student Enrollment</h1>
+                    <p className="subtitle">Complete all steps to enroll in your course</p>
+                </>
+            )}
 
             <div className="enroll-card">
 
@@ -134,32 +142,29 @@ function BookNow() {
                     Back to Home
                 </p>
 
-                <div className="stepper">
-                    <div className="stepper-wo-pbar">
+                {step !== 3 && (
+                    <div className="stepper">
+                        <div className="stepper-wo-pbar">
+                            <div className={`step ${step >= 1 ? "active" : ""}`}>📖</div>
 
-                        <div className={`step ${step >= 1 ? "active" : ""}`}>📖</div>
+                            {enrollmentType === "individual" && (
+                                <>
+                                    <div className={`step ${step >= 2 ? "active" : ""}`}>💳</div>
+                                    <div className={`step ${step >= 3 ? "active" : ""}`}>📋</div>
+                                    <div className={`step ${step >= 4 ? "active" : ""}`}>📄</div>
+                                </>
+                            )}
 
-                        {enrollmentType === "individual" && (
-                            <>
+                            {enrollmentType === "company" && (
                                 <div className={`step ${step >= 2 ? "active" : ""}`}>💳</div>
-                                <div className={`step ${step >= 3 ? "active" : ""}`}>📋</div>
-                                <div className={`step ${step >= 4 ? "active" : ""}`}>📄</div>
-                            </>
-                        )}
+                            )}
+                        </div>
 
-                        {enrollmentType === "company" && (
-                            <div className={`step ${step >= 2 ? "active" : ""}`}>💳</div>
-                        )}
-
+                        <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${progress}%` }} />
+                        </div>
                     </div>
-
-                    <div className="progress-bar">
-                        <div
-                            className="progress-fill"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-                </div>
+                )}
 
                 {step === 1 && (
                     <CourseSelection
@@ -192,10 +197,10 @@ function BookNow() {
                 {step === 3 && (
                     <CourseSelectionSuccess enrollmentData={{
                         selectedCourse: selectedCourse,
-                        courseDate: selectedSession?.date, // ✅ date from session
-                        courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`, // ✅ time
-                        coursePrice: coursePrice, // ✅ dynamic price
-                        paymentMethod: paymentData.paymentMethod, // ✅ selected payment method
+                        courseDate: selectedSession?.date, 
+                        courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`, 
+                        coursePrice: coursePrice, 
+                        paymentMethod: paymentData.paymentMethod,
                         email: paymentData.email,
                         name: paymentData.name,
                     }} />
@@ -267,7 +272,7 @@ function BookNow() {
                                             await createFlow(slipUrl); // ✅
                                         }
 
-                                        setStep(3);
+                                        navigate("/booking-success");
 
                                     } catch (err) {
                                         alert(err.message);
@@ -289,8 +294,8 @@ function BookNow() {
                                             return;
                                         }
 
-                                        navigate("/enrollment-success", {
-                                            state: { email: userDetails.email }
+                                        navigate("/booking-success", {
+                                            state: { email: paymentData.email || userDetails.email }
                                         });
 
                                         return;

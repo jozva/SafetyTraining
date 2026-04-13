@@ -180,15 +180,24 @@ export default function StudentEnrollmentForm() {
           </button>
         )}
 
-        {step < totalSteps ? (
-          <button className="next-btn" onClick={() => setStep(prev => prev + 1)}>
-            Next
-          </button>
-        ) : (
-          <button className="next-btn" onClick={handleSubmit}>
-            Submit
-          </button>
-        )}
+      {step < totalSteps ? (
+    <button className="next-btn" onClick={async () => {
+        // ✅ formData console
+        const data = enrollmentRef.current?.getFormData()
+        console.log(`=== Section ${step} data ===`, data)
+        
+        // ✅ section save
+        await enrollmentRef.current?.saveSection(step)
+        
+        setStep(prev => prev + 1)
+    }}>
+        Next
+    </button>
+) : (
+    <button className="next-btn" onClick={handleSubmit}>
+        Submit
+    </button>
+)}
 
       </div>
     </section>

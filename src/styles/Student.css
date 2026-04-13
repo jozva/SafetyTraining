@@ -18,6 +18,9 @@ body {
   color: #111;
 }
 
+.ef-stats > .stat-card{
+  flex-direction: row !important;
+}
 /* ── Page Wrapper ── */
 .sm-page {
   max-width: 1400px;
