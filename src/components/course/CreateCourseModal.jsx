@@ -100,14 +100,14 @@ function CreateCourseModal({ close, categories, refreshCourses, editCourse }) {
                 if (editCourse) {
 
                     await axios.put(
-                        `http://72.61.236.154:8000/api/courses/${editCourse._id}`,
+                        `http://localhost:8000/api/courses/${editCourse._id}`,
                         formData
                     )
 
                 } else {
 
                     await axios.post(
-                        "http://72.61.236.154:8000/api/courses",
+                        "http://localhost:8000/api/courses",
                         formData
                     )
 

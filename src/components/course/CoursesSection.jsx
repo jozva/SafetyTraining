@@ -10,7 +10,7 @@ function CoursesSection() {
 
     useEffect(() => {
 
-        axios.get("http://72.61.236.154:8000/api/courses")
+        axios.get("http://localhost:8000/api/courses")
             .then(res => setCourses(res.data))
 
     }, [])
