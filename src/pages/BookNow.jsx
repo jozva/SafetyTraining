@@ -6,7 +6,7 @@ import LLNDAssessment from "../components/llnd/LLNDAssessment";
 import EnrollmentRegister from "../components/enrollmrntRegister/EnrollmentRegister";
 import CourseSelectionSuccess from "../components/course/CourseSelectionSuccess";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
-import {  useLocation } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 
 function BookNow() {
     const { state } = useLocation()
@@ -57,7 +57,7 @@ function BookNow() {
 
         setIsLoading(true);
 
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/book-now/check-role?id=${enrollId}`)
+        fetch(`http://72.61.236.154:8000/api/book-now/check-role?id=${enrollId}`)
             .then(res => res.json())
             .then(data => {
 
@@ -95,7 +95,7 @@ function BookNow() {
 
     if (isLoading) return <div>Loading...</div>;
 
-    const createFlow = async (slipUrl = "") => { 
+    const createFlow = async (slipUrl = "") => {
         try {
             const studentId = localStorage.getItem("enrollId");
             if (!studentId) return;
@@ -114,7 +114,7 @@ function BookNow() {
             formData.append("transactionId", paymentData.transactionId || "");
             formData.append("slipUrl", slipUrl); // ✅
 
-            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/create", {
+            const res = await fetch("http://72.61.236.154:8000/api/flow/create", {
                 method: "POST",
                 body: formData,
             });
@@ -126,6 +126,27 @@ function BookNow() {
             console.error(err);
         }
     };
+const sendBookingEmail = async () => {
+    try {
+        await fetch("http://72.61.236.154:8000/api/booking-email/send-confirmation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: paymentData.name,
+                email: paymentData.email,
+                courseName: selectedCourse?.title,
+                courseCode: selectedCourse?.courseCode,
+                courseDate: selectedSession?.date,
+                startTime: selectedSession?.startTime,
+                endTime: selectedSession?.endTime,
+                coursePrice,
+                paymentMethod: paymentData.paymentMethod,
+            }),
+        });
+    } catch (err) {
+        console.error("Email send failed:", err.message);
+    }
+};
     return (
         <section className="enroll-page">
 
@@ -197,9 +218,9 @@ function BookNow() {
                 {step === 3 && (
                     <CourseSelectionSuccess enrollmentData={{
                         selectedCourse: selectedCourse,
-                        courseDate: selectedSession?.date, 
-                        courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`, 
-                        coursePrice: coursePrice, 
+                        courseDate: selectedSession?.date,
+                        courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`,
+                        coursePrice: coursePrice,
                         paymentMethod: paymentData.paymentMethod,
                         email: paymentData.email,
                         name: paymentData.name,
@@ -234,12 +255,11 @@ function BookNow() {
 
                                 if (step === 2) {
                                     setTriggerValidation(true);
-
                                     if (!isPaymentValid) return;
 
                                     try {
                                         let studentId = localStorage.getItem("enrollId");
-                                        let slipUrl = ""; // ✅
+                                        let slipUrl = "";
 
                                         if (!studentId) {
                                             const formData = new FormData();
@@ -256,7 +276,7 @@ function BookNow() {
                                             formData.append("startTime", selectedSession?.startTime);
                                             formData.append("endTime", selectedSession?.endTime);
 
-                                            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enroll/enrollment", {
+                                            const res = await fetch("http://72.61.236.154:8000/api/enroll/enrollment", {
                                                 method: "POST",
                                                 body: formData,
                                             });
@@ -264,15 +284,27 @@ function BookNow() {
                                             const data = await res.json();
                                             studentId = data._id;
                                             localStorage.setItem("enrollId", studentId);
-                                            slipUrl = data.courses?.[0]?.slipUrl || ""; // ✅
+                                            slipUrl = data.courses?.[0]?.slipUrl || "";
                                         }
 
                                         const flowId = localStorage.getItem("flowId");
                                         if (!flowId) {
-                                            await createFlow(slipUrl); // ✅
+                                            await createFlow(slipUrl);
                                         }
-
-                                        navigate("/booking-success");
+                                        
+                                        await sendBookingEmail();
+                                        // ✅ setStep(3) இல்லாம — navigate பண்றோம்
+                                        navigate("/booking-success", {
+                                            state: {
+                                                selectedCourse,
+                                                courseDate: selectedSession?.date,
+                                                courseTime: `${selectedSession?.startTime} - ${selectedSession?.endTime}`,
+                                                coursePrice,
+                                                paymentMethod: paymentData.paymentMethod,
+                                                email: paymentData.email,
+                                                name: paymentData.name,
+                                            }
+                                        });
 
                                     } catch (err) {
                                         alert(err.message);

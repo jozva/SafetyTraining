@@ -7,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(timer);
@@ -19,12 +19,12 @@ export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
   }
 
   // ✅ Payment method display
-  const paymentMethodDisplay = enrollmentData.paymentMethod === "card" 
-    ? "Credit Card - Pay Now" 
+  const paymentMethodDisplay = enrollmentData.paymentMethod === "card"
+    ? "Credit Card - Pay Now"
     : "Bank Transfer";
 
   // ✅ Course display
-  const courseDisplay = enrollmentData.selectedCourse 
+  const courseDisplay = enrollmentData.selectedCourse
     ? `${enrollmentData.selectedCourse.courseCode} – ${enrollmentData.selectedCourse.category}`
     : "Course not selected";
 
@@ -49,39 +49,39 @@ export default function EnrollmentSuccess({ enrollmentData, onBackToHome }) {
 
   const { setUser } = useContext(AuthContext); // 🔥 ADD THIS
 
-const handleGoToDashboard = async () => {
-  try {
-    const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/auth/auto-login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: enrollmentData.email,
-      }),
-    });
+  const handleGoToDashboard = async () => {
+    try {
+      const res = await fetch("http://72.61.236.154:8000/api/auth/auto-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: enrollmentData.email,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      localStorage.setItem("token", data.token);
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
 
-      // ✅ SAFE SAVE
-      if (data.user && typeof data.user === "object") {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setUser(data.user); // 🔥 IMPORTANT
+        // ✅ SAFE SAVE
+        if (data.user && typeof data.user === "object") {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          setUser(data.user); // 🔥 IMPORTANT
+        } else {
+          console.error("Invalid user:", data.user);
+        }
+
+        navigate("/student");
       } else {
-        console.error("Invalid user:", data.user);
+        alert("Login failed");
       }
-
-      navigate("/student");
-    } else {
-      alert("Login failed");
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
   return (
     <div className="enrollment-wrapper">
@@ -145,9 +145,9 @@ const handleGoToDashboard = async () => {
 
         {/* Payment Notice - Card Payment */}
         {enrollmentData.paymentMethod === "Card Payment" && (
-          <div className="payment-notice" style={{background: "#e8f5e9", borderColor: "#4caf50"}}>
+          <div className="payment-notice" style={{ background: "#e8f5e9", borderColor: "#4caf50" }}>
             <p>
-              Your payment has been processed successfully. 
+              Your payment has been processed successfully.
               A receipt has been sent to {enrollmentData.email}.
             </p>
           </div>

@@ -177,9 +177,9 @@ const EnrollmentRegister = forwardRef(({ userDetails, savedFormData, section, se
                 section: 4,
                 language: {
                     countryOfBirth: formData.countryOfBirth,
-                    otherLanguage: formData.otherLanguage,    
-                            speaksOtherLanguage: formData.speaksOtherLanguage, // ✅ add
-            indigenousStatus: formData.indigenousStatus, 
+                    otherLanguage: formData.otherLanguage,
+                    speaksOtherLanguage: formData.speaksOtherLanguage, // ✅ add
+                    indigenousStatus: formData.indigenousStatus,
                 },
                 specialNeeds: {
                     hasDisability: formData.hasDisability === "yes",
@@ -189,16 +189,14 @@ const EnrollmentRegister = forwardRef(({ userDetails, savedFormData, section, se
             }
         }
 
-        console.log(`=== Section ${sectionNumber} saving ===`, payload) // ✅ check
 
         try {
-            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enrollment-form/section", {
+            const res = await fetch("http://72.61.236.154:8000/api/enrollment-form/section", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             })
             const data = await res.json()
-            console.log(`Section ${sectionNumber} saved:`, data)
         } catch (err) {
             console.error(`Section ${sectionNumber} save error:`, err)
         }
@@ -269,18 +267,18 @@ const EnrollmentRegister = forwardRef(({ userDetails, savedFormData, section, se
             disabilityNotes: savedFormData.specialNeeds?.other || prev.disabilityNotes,
             usi: savedFormData.usi?.number || prev.usi,
             usiPermission: savedFormData.usi?.permission || prev.usiPermission,
-staApplication: savedFormData.usi?.staApplication ?? prev.staApplication ?? "no",
-speaksOtherLanguage: savedFormData.language?.speaksOtherLanguage ?? prev.speaksOtherLanguage ?? "",
-indigenousStatus: savedFormData.language?.indigenousStatus ?? prev.indigenousStatus ?? "",
+            staApplication: savedFormData.usi?.staApplication ?? prev.staApplication ?? "no",
+            speaksOtherLanguage: savedFormData.language?.speaksOtherLanguage ?? prev.speaksOtherLanguage ?? "",
+            indigenousStatus: savedFormData.language?.indigenousStatus ?? prev.indigenousStatus ?? "",
             staAuthoriseName: savedFormData.staAuthoriseName || prev.staAuthoriseName,
             staConsent: savedFormData.staConsent || prev.staConsent,
             staTownOfBirth: savedFormData.staTownOfBirth || prev.staTownOfBirth,
             staOverseasTown: savedFormData.staOverseasTown || prev.staOverseasTown,
             staIdType: savedFormData.staIdType || prev.staIdType,
             // savedFormData useEffect-ல் கடைசியில் add பண்ணுங்க
-signatureUrl: savedFormData.signatureUrl ?? prev.signatureUrl ?? null,
-idDocumentUrl: savedFormData.idDocumentUrl ?? prev.idDocumentUrl ?? null,
-photoDocumentUrl: savedFormData.photoDocumentUrl ?? prev.photoDocumentUrl ?? null,
+            signatureUrl: savedFormData.signatureUrl ?? prev.signatureUrl ?? null,
+            idDocumentUrl: savedFormData.idDocumentUrl ?? prev.idDocumentUrl ?? null,
+            photoDocumentUrl: savedFormData.photoDocumentUrl ?? prev.photoDocumentUrl ?? null,
         }));
     }, [savedFormData]);
 
@@ -329,12 +327,10 @@ photoDocumentUrl: savedFormData.photoDocumentUrl ?? prev.photoDocumentUrl ?? nul
                     fd.append(key, value)
                 }
             })
-            console.log("=== FormData contents ===")
             for (let [key, value] of fd.entries()) {
-                console.log(key, ":", value)
             }
 
-            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/enrollment-form", {
+            const res = await fetch("http://72.61.236.154:8000/api/enrollment-form", {
                 method: "POST",
                 body: fd // ✅ Content-Type header வேண்டாம்
             })

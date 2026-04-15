@@ -33,8 +33,8 @@ export default function StudentMyCourses() {
       if (!studentId) throw new Error("Student ID not found. Please login again.");
 
       const [dashRes, coursesRes] = await Promise.all([
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/student/dashboard/${studentId}`),
-        fetch(`https://safety-training-academy-tho8.onrender.com/api/courses`)
+        fetch(`http://72.61.236.154:8000/api/student/dashboard/${studentId}`),
+        fetch(`http://72.61.236.154:8000/api/courses`)
       ]);
 
       if (!dashRes.ok) throw new Error("Failed to fetch dashboard data");
@@ -48,7 +48,7 @@ export default function StudentMyCourses() {
 
       if (dash.enrolledCourses?.length > 0) {
         const courseDetailsPromises = dash.enrolledCourses.map(enrolled =>
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/courses/${enrolled.courseId}`)
+          fetch(`http://72.61.236.154:8000/api/courses/${enrolled.courseId}`)
             .then(res => res.ok ? res.json() : null)
             .then(courseData => ({
               ...enrolled,
@@ -206,39 +206,6 @@ export default function StudentMyCourses() {
                   <div className="mc-progress-bar">
                     <div className="mc-progress-bar__fill" style={{ width: "10%" }} />
                   </div>
-                </div>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  {!formApproved && (
-                    <button
-                      className="mc-btn mc-btn--outline mc-btn--sm"
-                      onClick={() => {
-                        if (!paymentVerified) {
-                          alert("Please wait until admin verifies your payment before completing the enrollment form.");
-                          return;
-                        }
-                        // ✅ ADD THIS CHECK
-                        if (!assessmentPassed) {
-                          alert("Please complete and pass the LLND Assessment before filling the enrollment form.");
-                          return;
-                        }
-                        navigate("/student/enrollment-form");
-                      }}
-                    >
-                      📄 Complete Enrollment Form
-                    </button>
-                  )}
-                  <button
-                    className="mc-btn mc-btn--purple mc-btn--sm"
-                    onClick={() => {
-                      if (!paymentVerified) { // ✅ fixed
-                        alert("Please wait until admin verifies your payment before taking the assessment.");
-                        return;
-                      }
-                      setShowAssessment(true);
-                    }}
-                  >
-                    <span>📖</span> Retake LLND Assessment
-                  </button>
                 </div>
               </div>
             </div>

@@ -228,4 +228,14 @@
     padding: 8px 12px;
     font-size: 0.78rem;
   }
+    .alert-danger {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .alert-action-btn {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
 }

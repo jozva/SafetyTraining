@@ -1,16 +1,45 @@
 import "../../styles/EnrollmentComplete.css"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
+import { useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
 
-function EnrollmentComplete({ email = "your email" }) {
+function EnrollmentComplete() {
 
+    const { state } = useLocation()
+    const enrollmentData = state || {}
     const navigate = useNavigate()
+    const { setUser } = useContext(AuthContext)
+
+    const handleGoToDashboard = async () => {
+        try {
+            const res = await fetch("http://72.61.236.154:8000/api/auth/auto-login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: enrollmentData.email }),
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                localStorage.setItem("token", data.token)
+                if (data.user && typeof data.user === "object") {
+                    localStorage.setItem("user", JSON.stringify(data.user))
+                    setUser(data.user)
+                }
+                window.location.href = "/student" // ✅ hard redirect
+            } else {
+                alert("Login failed")
+            }
+        } catch (err) {
+            console.error(err)
+            window.location.href = "/login"
+        }
+    }
 
     return (
         <div className="ec-page">
-
             <div className="ec-card">
 
-                {/* GRADIENT HEADER */}
                 <div className="ec-header">
                     <div className="ec-check-circle">
                         <svg
@@ -26,24 +55,19 @@ function EnrollmentComplete({ email = "your email" }) {
                             <path d="M20 6L9 17l-5-5" />
                         </svg>
                     </div>
-
                     <h1 className="ec-title">
                         Thank you for your booking with Safety Training Academy
                     </h1>
-
                     <p className="ec-subtitle">
-                        Your enrollment has been completed successfully.
+                        Your Booking has been completed successfully.
                     </p>
                 </div>
 
-                {/* BODY */}
                 <div className="ec-body">
-
                     <p className="ec-message">
                         A confirmation email has been sent to{" "}
-                        <strong>{email}</strong>. Please check your inbox and follow the instructions.
+                        <strong>{enrollmentData.email || "your email"}</strong>. Please check your inbox and follow the instructions.
                     </p>
-
                     <p className="ec-message">
                         If you need any assistance, please contact us.
                     </p>
@@ -55,21 +79,14 @@ function EnrollmentComplete({ email = "your email" }) {
                         <p className="ec-org-name">Safety Training Academy</p>
                         <p className="ec-org-role">Training Team</p>
                         <p className="ec-org-phone">1300 976 097</p>
-                        <a
-                            href="mailto:info@safetytrainingacademy.edu.au"
-                            className="ec-org-email"
-                        >
+                        <a href="mailto:info@safetytrainingacademy.edu.au" className="ec-org-email">
                             info@safetytrainingacademy.edu.au
                         </a>
                     </div>
 
-                    <button
-                        className="ec-dashboard-btn"
-                        onClick={() => navigate("/")}
-                    >
+                    <button className="ec-dashboard-btn" onClick={handleGoToDashboard}>
                         Continue to Dashboard
                     </button>
-
                 </div>
 
             </div>

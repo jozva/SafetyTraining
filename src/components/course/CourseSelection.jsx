@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import "../../styles/CourseSelection.css"
 
-function CourseSelection({ 
-    enrollmentType, 
+function CourseSelection({
+    enrollmentType,
     setEnrollmentType,
     selectedSession,
     setSelectedSession,
@@ -35,7 +35,7 @@ function CourseSelection({
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/courses")
+                const res = await axios.get("http://72.61.236.154:8000/api/courses")
                 const fetchedCourses = res.data
                 setCourses(fetchedCourses)
 
@@ -48,7 +48,7 @@ function CourseSelection({
                         setSelectedCourse(selected)
 
                         const slotRes = await axios.get(
-                            `https://safety-training-academy-tho8.onrender.com/api/schedules/course/${courseId}`
+                            `http://72.61.236.154:8000/api/schedules/course/${courseId}`
                         )
                         setSlots(slotRes.data)
                     }
@@ -75,7 +75,7 @@ function CourseSelection({
 
         try {
             const res = await axios.get(
-                `https://safety-training-academy-tho8.onrender.com/api/schedules/course/${courseId}`
+                `http://72.61.236.154:8000/api/schedules/course/${courseId}`
             )
             setSlots(res.data)
         } catch (err) {
@@ -89,37 +89,37 @@ function CourseSelection({
 
             {/* Enrollment Type */}
             {!hideEnrollmentType && (
-            <div className="form-group">
+                <div className="form-group">
 
-                <label>Enrollment type</label>
+                    <label>Enrollment type</label>
 
-                <div className="radio-group">
+                    <div className="radio-group">
 
-                    <label className="radio-group-opt">
-                        <input
-                            name="type"
-                            type="radio"
-                            value="individual"
-                            checked={enrollmentType === "individual"}
-                            onChange={(e) => setEnrollmentType(e.target.value)}
-                        />
-                        <span>Individual</span>
-                    </label>
+                        <label className="radio-group-opt">
+                            <input
+                                name="type"
+                                type="radio"
+                                value="individual"
+                                checked={enrollmentType === "individual"}
+                                onChange={(e) => setEnrollmentType(e.target.value)}
+                            />
+                            <span>Individual</span>
+                        </label>
 
-                    <label className="radio-group-opt">
-                        <input
-                            name="type"
-                            type="radio"
-                            value="company"
-                            checked={enrollmentType === "company"}
-                            onChange={(e) => setEnrollmentType(e.target.value)}
-                        />
-                        <span>Company</span>
-                    </label>
+                        <label className="radio-group-opt">
+                            <input
+                                name="type"
+                                type="radio"
+                                value="company"
+                                checked={enrollmentType === "company"}
+                                onChange={(e) => setEnrollmentType(e.target.value)}
+                            />
+                            <span>Company</span>
+                        </label>
 
-                </div>
+                    </div>
 
-            </div>)}
+                </div>)}
 
             {/* Course Select */}
             <div className="form-group">
@@ -178,8 +178,7 @@ function CourseSelection({
 
                                             <div
                                                 key={index}
-                                                className={`slot-card ${selectedSession?.startTime === session.startTime ? "active" : ""}`}
-                                                onClick={() => {
+                                                className={`slot-card ${selectedSession?._id === session._id ? "active" : ""}`} onClick={() => {
                                                     setSelectedSession({
                                                         ...session,
                                                         date: slot.date

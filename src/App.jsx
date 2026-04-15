@@ -42,6 +42,8 @@ import StudentEnrollmentForm from "./components/student/StudentEnrollmentForm"
 import StudentResults from "./components/student/StudentResults"
 import StudentSchedule from "./components/student/StudentSchedule"
 import ProtectedRoute from "./components/ProtectedRoute"
+import EnrollmentSuccess from "./components/student/StudentEnrollmentSuccess"
+
 
 function App() {
 
@@ -67,6 +69,9 @@ function App() {
                 <Route path="/about" element={<About/>}/>
                 <Route path="/course" element={<CourseCard/>}/>
                 <Route path="/all-courses" element={<AllCourses/>}/>
+                                    <Route path="/enrollment-success" element={<EnrollmentSuccess />} />
+
+
 
                 {/* STUDENT */}
                 <Route
@@ -83,6 +88,7 @@ function App() {
                     <Route path="/student/enrollment-form" element={<StudentEnrollmentForm/>}/>
                     <Route path="/student/results" element={<StudentResults/>}/>
                     <Route path="/student/certificates" element={<StudentCertificate/>}/>
+
                 </Route>
 
                 {/* TEACHER */}

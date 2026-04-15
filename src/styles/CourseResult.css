@@ -115,6 +115,8 @@
   .result-card {
     max-height: none;   /* allow full scroll */
     height: auto;
+    max-width: none;
+    margin-top: 26%;
   }
   .result-overlay{
     align-items: flex-start;

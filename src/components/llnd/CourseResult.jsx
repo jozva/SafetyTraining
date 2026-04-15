@@ -88,7 +88,7 @@ function CourseResult({ onRetry, onContinue, data }) {
                                 answers: data.answers || []  
                             };
 
-                            const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/llnd", {
+                            const res = await fetch("http://72.61.236.154:8000/api/flow/llnd", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json"

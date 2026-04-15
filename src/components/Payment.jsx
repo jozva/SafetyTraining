@@ -25,6 +25,11 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
     const [errors, setErrors] = useState({})
     const [touched, setTouched] = useState(false)
 
+    // ✅ eWAY Payment Status State (NEW - no UI change, just state)
+    const [paymentStatus, setPaymentStatus] = useState(null) // null | "loading" | "success" | "error"
+    const [paymentError, setPaymentError] = useState("")
+    const [ewayTransactionId, setEwayTransactionId] = useState("")
+
     // Errors State
     useEffect(() => {
         if (!name && !email && !phone) return
@@ -86,7 +91,7 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
             if (!isCompanyEnroll && !cvv.trim()) newErrors.cvv = "CVV is required"
         }
 
-        // 👇 ONLY show errors when triggered
+        // ONLY show errors when triggered
         if (triggerValidation) {
             setErrors(newErrors)
         }
@@ -107,10 +112,75 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
         }
 
     }
+
     useEffect(() => {
         const isValid = validate()
         if (setIsValid) setIsValid(isValid)
     }, [name, phone, email, agreed, transactionId, paymentSlip, cardName, cardNumber, expiryMonth, expiryYear, cvv, paymentMethod, triggerValidation])
+
+    // ✅ eWAY Card Payment Handler (NEW)
+    const handleCardPayment = async () => {
+        // Re-use existing validate logic
+        const newErrors = {}
+        if (!name.trim()) newErrors.name = "Full name is required"
+        if (!phone.trim()) newErrors.phone = "Phone number is required"
+        if (!email.trim()) newErrors.email = "Email is required"
+        else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Enter a valid email"
+        if (!agreed) newErrors.agreed = "Please agree to the terms"
+        if (!cardName.trim()) newErrors.cardName = "Name on card is required"
+        if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required"
+        if (!expiryMonth) newErrors.expiryMonth = "Expiry month is required"
+        if (!expiryYear) newErrors.expiryYear = "Expiry year is required"
+        if (!cvv.trim()) newErrors.cvv = "CVV is required"
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors)
+            return
+        }
+
+        setPaymentStatus("loading")
+        setPaymentError("")
+
+        try {
+            const response = await fetch("/api/payment/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    cardName,
+                    cardNumber,
+                    expiryMonth,
+                    expiryYear,
+                    cvv,
+                    amount: coursePrice || selectedCourse?.sellingPrice || "0",
+                    email,
+                    name,
+                    phone,
+                    userId: phone,
+                }),
+            })
+
+            const result = await response.json()
+
+            if (result.success) {
+                setPaymentStatus("success")
+                setEwayTransactionId(result.transactionId)
+                // Update paymentData with eWAY transaction info
+                setPaymentData(prev => ({
+                    ...prev,
+                    ewayTransactionId: result.transactionId,
+                    paymentConfirmed: true,
+                }))
+                // Move to next step after short delay
+                setTimeout(() => onNext(), 1500)
+            } else {
+                setPaymentStatus("error")
+                setPaymentError(result.message || "Payment failed. Please try again.")
+            }
+        } catch (err) {
+            setPaymentStatus("error")
+            setPaymentError("Network error. Please check your connection and try again.")
+        }
+    }
 
     return (
 
@@ -184,7 +254,7 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                     <span>Course:</span>
                     <span>
                         {selectedCourse
-                            ? `${selectedCourse.courseCode} - ${selectedCourse.category}`
+                            ? `${selectedCourse.courseCode} - ${selectedCourse.title}`
                             : "Select a course"}
                     </span>
                 </div>
@@ -369,6 +439,32 @@ function Payment({ selectedCourse, setUserDetails, onNext, onPrev, courseDate, c
                         <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="visa" />
                         <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="master" />
                     </div>
+
+                    {/* ✅ eWAY Status Messages (NEW - shown only after Pay Now click) */}
+                    {paymentStatus === "success" && (
+                        <div className="payment-success">
+                            ✅ Payment Successful! Transaction ID: <strong>{ewayTransactionId}</strong>
+                        </div>
+                    )}
+
+                    {paymentStatus === "error" && (
+                        <div className="payment-error">
+                            ❌ {paymentError}
+                        </div>
+                    )}
+
+                    {/* ✅ Pay Now Button (NEW) */}
+                    <button
+                        className="pay-now-btn"
+                        onClick={handleCardPayment}
+                        disabled={paymentStatus === "loading" || paymentStatus === "success"}
+                    >
+                        {paymentStatus === "loading"
+                            ? "⏳ Processing Payment..."
+                            : paymentStatus === "success"
+                            ? "✅ Payment Complete"
+                            : `💳 Pay Now $${coursePrice || selectedCourse?.sellingPrice || "0"}`}
+                    </button>
 
                 </div>
 

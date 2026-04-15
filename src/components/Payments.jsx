@@ -30,7 +30,7 @@ const Payment = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("https://safety-training-academy-tho8.onrender.com/api/flow/payments");
+      const res = await axios.get("http://72.61.236.154:8000/api/flow/payments");
 
       setPayments(res.data.payments);
       setStats(res.data.stats);
@@ -44,7 +44,7 @@ const Payment = () => {
 
   const handleVerify = async () => {
     await axios.put(
-      `https://safety-training-academy-tho8.onrender.com/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
+      `http://72.61.236.154:8000/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
       { status: "success" }
     );
 
@@ -65,7 +65,7 @@ const Payment = () => {
       }
 
       await axios.put(
-        `https://safety-training-academy-tho8.onrender.com/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
+        `http://72.61.236.154:8000/api/flow/payment/${selectedPayment.enrollmentId}/${selectedPayment.itemId}`,
         {
           status: "failed",
           reason: rejectionReason
@@ -110,6 +110,7 @@ const Payment = () => {
                 <th>Booking date</th>
                 <th>Student</th>
                 <th>Course</th>
+                <th>Shedule Date</th>
                 <th>Individual/Company</th>
                 <th>Transaction ID</th>
                 <th>Amount</th>
@@ -119,8 +120,8 @@ const Payment = () => {
               </tr>
             </thead>
             <tbody>
-              {payments.map((p) => (
-                <tr key={p.id}>
+              {payments.map((p,index) => (
+                <tr key={p.id || p.transId || index}>
                   <td>{new Date(p.date).toLocaleDateString()}</td>
                   <td>
                     <div className="student-info">
@@ -131,11 +132,11 @@ const Payment = () => {
                   <td>
                     <div className="course-info">
                       <span className="course-name">{p.course}</span>
-                      <span className="course-code">{p.code}</span>
                     </div>
                   </td>
+                  <td>{p.sessionDate ? new Date(p.sessionDate).toLocaleDateString() : "—"}</td> 
                   <td>{p.type || "Individual"}</td>
-                  <td>{p.transId || "—"}</td>        {/* Transaction ID */}
+                  <td>{p.transId || "—"}</td>        
                   <td className="amount">${p.amount}</td>
                   <td>{new Date(p.date).toLocaleDateString()}</td>
                   <td>

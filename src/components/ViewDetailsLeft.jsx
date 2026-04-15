@@ -41,7 +41,7 @@ function ViewDetailsLeft({ course }) {
 
                 <div className="info-card duration">
 
-                    <span>📅</span>
+                    <span></span>
                     <p>Duration</p>
                     <strong>{course?.duration}</strong>
 

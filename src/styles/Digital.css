@@ -27,8 +27,9 @@
 .digital-main {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 80px;
+  flex-wrap: wrap;
 }
 
 /* LEFT SIDE */
@@ -36,22 +37,20 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 220px;
-  margin: auto;
+  min-width: 80px;
 }
 
 /* DRAG ITEMS */
 .draggable {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
   text-align: center;
   cursor: grab;
   font-size: 14px;
   transition: 0.2s;
-  /* prevent text selection while dragging on mobile */
   -webkit-user-select: none;
   user-select: none;
   touch-action: none;
@@ -75,6 +74,11 @@
   padding: 15px;
 }
 
+.draggable img {
+  width: 60px;
+  height: 60px;
+}
+
 /* RIGHT SIDE */
 .digital-right {
   display: flex;
@@ -90,7 +94,7 @@
   gap: 15px;
 }
 
-/* DROP ZONE — default */
+/* DROP ZONE */
 .drop-zone {
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
@@ -102,18 +106,12 @@
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
-/* DROP ZONE — filled / green */
 .drop-zone.filled {
   background: #d1fae5;
   border-color: #10b981;
   border-style: solid;
   color: #065f46;
   font-weight: 600;
-}
-
-/* ONLY FOR Q1 OVERLAY */
-.overlay-drop {
-  position: absolute;
 }
 
 .drop-zone:hover {
@@ -124,6 +122,38 @@
 .drop-zone.filled:hover {
   border-color: #059669;
   background: #a7f3d0;
+}
+
+/* OVERLAY */
+.overlay-drop {
+  position: absolute;
+}
+
+/* IMAGE WRAPPER */
+.digital-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  justify-content: center;
+}
+
+.digital-bg-img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* OVERLAY POSITIONS */
+.checklist {
+  top: 75px;
+  left: 175px;
+}
+
+.images {
+  top: 130px;
+  left: 173px;
+  min-width: 150px;
 }
 
 /* SUCCESS TEXT */
@@ -142,6 +172,7 @@
   border: 1px solid #ccc;
   font-size: 14px;
   transition: 0.2s;
+  box-sizing: border-box;
 }
 
 .url-input:focus {
@@ -149,78 +180,7 @@
   border-color: #7c3aed;
 }
 
-/* FOOTER */
-.digital-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 25px;
-  gap: 10px;
-}
-
-/* BUTTONS */
-.digital-footer button {
-  padding: 10px 18px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-/* PREVIOUS */
-.digital-footer button:first-child {
-  background: #e5e7eb;
-}
-
-.digital-footer button:first-child:hover {
-  background: #d1d5db;
-}
-
-/* NEXT */
-.digital-footer button:last-child {
-  background: #7c3aed;
-  color: white;
-}
-
-.digital-footer button:last-child:hover {
-  background: #6d28d9;
-}
-
-/* TEXT */
-.digital-footer span {
-  font-size: 13px;
-  color: #555;
-}
-
-.digital-footer button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.digital-image-wrapper {
-  position: relative;
-  width: 380px;
-  display: flex;
-  justify-content: center;
-}
-
-.digital-bg-img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-/* overlay positions */
-.checklist {
-  top: 75px;
-  left: 175px;
-}
-
-.draggable {
-  border-radius: 12px;
-  text-align: center;
-}
-
+/* RESET BUTTON */
 .reset-btn {
   margin: 35px auto;
   display: block;
@@ -235,18 +195,7 @@
   background: #d1d5db;
 }
 
-.draggable img {
-  width: 60px;
-  height: 60px;
-}
-
-.images {
-  top: 130px;
-  left: 173px;
-  min-width: 150px;
-}
-
-/* device grid */
+/* DEVICE */
 .device {
   display: flex;
   flex-direction: column;
@@ -259,16 +208,178 @@
   height: auto;
 }
 
+/* FOOTER */
+.digital-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+  gap: 10px;
+}
 
+.digital-footer button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.digital-footer button:first-child {
+  background: #e5e7eb;
+}
+
+.digital-footer button:first-child:hover {
+  background: #d1d5db;
+}
+
+.digital-footer button:last-child {
+  background: #7c3aed;
+  color: white;
+}
+
+.digital-footer button:last-child:hover {
+  background: #6d28d9;
+}
+
+.digital-footer span {
+  font-size: 13px;
+  color: #555;
+}
+
+.digital-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── MOBILE ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
 
+  /* Q1 & Q3 */
   .digital-main {
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    align-items: center;
   }
 
   .digital-left {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
     width: 100%;
+    gap: 12px;
+    min-width: unset;
+  }
+
+  .digital-bg-img {
+    width: 130%;
+    height: auto;
+  }
+
+  .draggable img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .checklist {
+    top: 20%;
+    left: 44%;
+    width: 90px;
+    font-size: 10px;
+  }
+
+  .images {
+    top: 34%;
+    left: 44%;
+    min-width: unset;
+    font-size: 10px;
+  }
+
+  .draggable.green {
+    padding: 10px 12px;
+    font-size: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .digital-image-wrapper {
+    max-width: 280px;
+    width: 100%;
+  }
+
+  .drop-zone {
+    width: 120px;
+    font-size: 10px;
+    padding: 5px;
+  }
+
+  /* ── Q2 drag-labels: left labels | right devices, both vertical ── */
+  .digital-main.labels-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: nowrap;        /* prevent wrapping to new row */
+    overflow-x: hidden;
+  }
+
+  /* Left column: green label cards stacked vertically */
+  .digital-main.labels-layout .digital-left {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 42%;
+    min-width: unset;
+    max-width: unset;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  /* Right column: device cards stacked vertically (1 column, not 2x2 grid) */
+  .digital-main.labels-layout .digital-right.grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    width: 55%;
+  }
+
+  /* Each device card: image on top, drop zone below */
+  .digital-main.labels-layout .device {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .digital-main.labels-layout .device img {
+    width: 44px;
+    height: auto;
+  }
+
+  /* Drop zone fills the device card width */
+  .digital-main.labels-layout .drop-zone {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 11px;
+    padding: 5px 4px;
+  }
+
+  /* Label height matches device card height — visual alignment */
+  .digital-main.labels-layout .digital-left .draggable.green {
+    min-height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-size: 11px;
+    padding: 6px 8px;
+    text-align: center;
   }
 
   .digital-right {
@@ -276,7 +387,12 @@
   }
 
   .digital-right.grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .device img {
+    width: 60px;
   }
 
   .digital-footer {
@@ -286,6 +402,7 @@
 
   .digital-footer button {
     width: 100%;
+    text-align: center;
   }
 
   .digital-footer span {
@@ -293,25 +410,50 @@
   }
 }
 
-
-@media (min-width: 601px) and (max-width: 900px) {
-
-  .digital-main {
-    gap: 25px;
-  }
-
-  .digital-right.grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1200px) {
-
+/* ─── DESKTOP ─────────────────────────────────────────────── */
+@media (min-width: 1024px) {
   .digital-container {
     padding: 30px;
   }
-    .digital-main {
-    width: 70%;
+
+  .digital-main {
+    width: 75%;
+    margin: 0 auto;
+    gap: 80px;
   }
 
+  .digital-image-wrapper {
+    max-width: 380px;
+  }
+
+  /* labels-layout: force row — labels left | devices grid right */
+  .digital-main.labels-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 40px;
+  }
+
+  .digital-main.labels-layout .digital-left {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: auto;
+    min-width: 180px;
+    gap: 14px;
+  }
+
+  .digital-main.labels-layout .digital-right.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    flex: 1;
+  }
+
+  .digital-main.labels-layout .device img {
+    width: 90px;
+  }
+
+  .digital-main.labels-layout .drop-zone {
+    width: 160px;
+  }
 }

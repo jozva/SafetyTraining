@@ -137,9 +137,6 @@ The accident was reported at 10:30 am on the same day.`,
         type: "mcq",
         passage: `"All workers must wear hard hats, steel-capped boots and high-visibility vests while on a construction site. Personal protective equipment (PPE) must be checked daily. Report any damaged PPE or equipment immediately to the site supervisor. Workers must follow all safety signs and instructions at all times."`,
 
-        question: `"All workers must wear hard hats, steel-capped boots and high-visibility vests while on a construction site. Personal protective equipment (PPE) must be checked daily. Report any damaged PPE or equipment immediately to the site supervisor. Workers must follow all safety signs and instructions at all times."
-
-Which three items of PPE must workers wear on site?`,
 
         options: [
             "Steel-capped boots, safety glasses, high-visibility vests",

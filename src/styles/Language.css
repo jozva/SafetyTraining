@@ -154,7 +154,9 @@
   .language-container {
     padding: 15px;
   }
-
+.passage-img {
+    width: 100%;
+  }
   .language-box {
     padding: 15px;
   }

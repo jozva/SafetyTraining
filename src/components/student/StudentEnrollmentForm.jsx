@@ -26,9 +26,9 @@ export default function StudentEnrollmentForm() {
         if (!studentId) throw new Error("Student ID not found. Please login again.");
 
         const [userRes, formRes, dashRes] = await Promise.all([
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/students/enrollment/${studentId}`),
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/enrollment-form?studentId=${studentId}`),
-          fetch(`https://safety-training-academy-tho8.onrender.com/api/student/dashboard/${studentId}`)
+          fetch(`http://72.61.236.154:8000/api/students/enrollment/${studentId}`),
+          fetch(`http://72.61.236.154:8000/api/enrollment-form?studentId=${studentId}`),
+          fetch(`http://72.61.236.154:8000/api/student/dashboard/${studentId}`)
         ]);
 
         if (!userRes.ok) throw new Error("Failed to fetch user details");
@@ -74,7 +74,7 @@ export default function StudentEnrollmentForm() {
         return;
       }
 
-      const res = await fetch("https://safety-training-academy-tho8.onrender.com/api/flow/complete", {
+      const res = await fetch("http://72.61.236.154:8000/api/flow/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ flowId }),
@@ -85,7 +85,7 @@ export default function StudentEnrollmentForm() {
         throw new Error(errorData.message || "Failed to submit enrollment");
       }
 
-      alert("Enrollment submitted successfully!");
+      navigate("/enrollment-success");
     } catch (err) {
       alert(`Error: ${err.message}`);
     }
@@ -184,7 +184,6 @@ export default function StudentEnrollmentForm() {
     <button className="next-btn" onClick={async () => {
         // ✅ formData console
         const data = enrollmentRef.current?.getFormData()
-        console.log(`=== Section ${step} data ===`, data)
         
         // ✅ section save
         await enrollmentRef.current?.saveSection(step)
